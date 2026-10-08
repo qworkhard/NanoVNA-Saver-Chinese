@@ -42,23 +42,23 @@ class HighPassAnalysis(Analysis):
         layout.addRow(self.label["titel"])
         layout.addRow(
             QtWidgets.QLabel(
-                f"Please place {self.app.markers[0].name}"
-                f" in the filter passband."
+                f"请将标记 {self.app.markers[0].name}"
+                f" 移动至滤波器通带内。"
             )
         )
-        layout.addRow("Result:", self.label["result"])
-        layout.addRow("Cutoff frequency:", self.label["3.0dB"])
-        layout.addRow("-6 dB point:", self.label["6.0dB"])
-        layout.addRow("-60 dB point:", self.label["60.0dB"])
-        layout.addRow("Roll-off:", self.label["octave"])
-        layout.addRow("Roll-off:", self.label["decade"])
+        layout.addRow("分析结果:", self.label["result"])
+        layout.addRow("截止频率 (-3 dB):", self.label["3.0dB"])
+        layout.addRow("-6 dB 频点:", self.label["6.0dB"])
+        layout.addRow("-60 dB 频点:", self.label["60.0dB"])
+        layout.addRow("滚降率 (Roll-off):", self.label["octave"])
+        layout.addRow("滚降率 (Roll-off):", self.label["decade"])
 
-        self.set_titel("Highpass analysis")
+        self.set_titel("高通滤波器分析")
 
     def runAnalysis(self):
         if not self.app.data.s21:
             logger.debug("No data to analyse")
-            self.set_result("No data to analyse.")
+            self.set_result("无分析数据。")
             return
 
         self.reset()

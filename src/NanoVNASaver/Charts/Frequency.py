@@ -72,18 +72,18 @@ class FrequencyChart(Chart):
         mode_group = QtGui.QActionGroup(self)
         self.menu = QtWidgets.QMenu()
 
-        self.reset = QtGui.QAction("Reset")
+        self.reset = QtGui.QAction("复位范围")
         self.reset.triggered.connect(self.resetDisplayLimits)
         self.menu.addAction(self.reset)
 
-        self.x_menu = QtWidgets.QMenu("Frequency axis")
-        self.action_automatic = QtGui.QAction("Automatic")
+        self.x_menu = QtWidgets.QMenu("频率 X 轴")
+        self.action_automatic = QtGui.QAction("自动范围")
         self.action_automatic.setCheckable(True)
         self.action_automatic.setChecked(True)
         self.action_automatic.changed.connect(
             lambda: self.setFixedSpan(self.action_fixed_span.isChecked())
         )
-        self.action_fixed_span = QtGui.QAction("Fixed span")
+        self.action_fixed_span = QtGui.QAction("固定频跨")
         self.action_fixed_span.setCheckable(True)
         self.action_fixed_span.changed.connect(
             lambda: self.setFixedSpan(self.action_fixed_span.isChecked())
@@ -95,12 +95,12 @@ class FrequencyChart(Chart):
         self.x_menu.addSeparator()
 
         self.action_set_fixed_start = QtGui.QAction(
-            f"Start ({format_frequency_chart(self.minFrequency)})"
+            f"起始频率 ({format_frequency_chart(self.minFrequency)})"
         )
         self.action_set_fixed_start.triggered.connect(self.setMinimumFrequency)
 
         self.action_set_fixed_stop = QtGui.QAction(
-            f"Stop ({format_frequency_chart(self.maxFrequency)})"
+            f"终止频率 ({format_frequency_chart(self.maxFrequency)})"
         )
         self.action_set_fixed_stop.triggered.connect(self.setMaximumFrequency)
 
@@ -109,9 +109,9 @@ class FrequencyChart(Chart):
 
         self.x_menu.addSeparator()
         frequency_mode_group = QtGui.QActionGroup(self.x_menu)
-        self.action_set_linear_x = QtGui.QAction("Linear")
+        self.action_set_linear_x = QtGui.QAction("线性坐标 (Linear)")
         self.action_set_linear_x.setCheckable(True)
-        self.action_set_logarithmic_x = QtGui.QAction("Logarithmic")
+        self.action_set_logarithmic_x = QtGui.QAction("对数坐标 (Logarithmic)")
         self.action_set_logarithmic_x.setCheckable(True)
         frequency_mode_group.addAction(self.action_set_linear_x)
         frequency_mode_group.addAction(self.action_set_logarithmic_x)
@@ -125,14 +125,14 @@ class FrequencyChart(Chart):
         self.x_menu.addAction(self.action_set_linear_x)
         self.x_menu.addAction(self.action_set_logarithmic_x)
 
-        self.y_menu = QtWidgets.QMenu("Data axis")
-        self.y_action_automatic = QtGui.QAction("Automatic")
+        self.y_menu = QtWidgets.QMenu("数据 Y 轴")
+        self.y_action_automatic = QtGui.QAction("自动刻度")
         self.y_action_automatic.setCheckable(True)
         self.y_action_automatic.setChecked(True)
         self.y_action_automatic.changed.connect(
             lambda: self.setFixedValues(self.y_action_fixed_span.isChecked())
         )
-        self.y_action_fixed_span = QtGui.QAction("Fixed span")
+        self.y_action_fixed_span = QtGui.QAction("固定跨度")
         self.y_action_fixed_span.setCheckable(True)
         self.y_action_fixed_span.changed.connect(
             lambda: self.setFixedValues(self.y_action_fixed_span.isChecked())
@@ -145,12 +145,12 @@ class FrequencyChart(Chart):
         self.y_menu.addSeparator()
 
         self.action_set_fixed_minimum = QtGui.QAction(
-            f"Minimum ({self.minDisplayValue})"
+            f"最小值 ({self.minDisplayValue})"
         )
         self.action_set_fixed_minimum.triggered.connect(self.setMinimumValue)
 
         self.action_set_fixed_maximum = QtGui.QAction(
-            f"Maximum ({self.maxDisplayValue})"
+            f"最大值 ({self.maxDisplayValue})"
         )
         self.action_set_fixed_maximum.triggered.connect(self.setMaximumValue)
 
@@ -160,9 +160,9 @@ class FrequencyChart(Chart):
         if self.logarithmicYAllowed():  # This only works for some plot types
             self.y_menu.addSeparator()
             vertical_mode_group = QtGui.QActionGroup(self.y_menu)
-            self.action_set_linear_y = QtGui.QAction("Linear")
+            self.action_set_linear_y = QtGui.QAction("线性刻度 (Linear)")
             self.action_set_linear_y.setCheckable(True)
-            self.action_set_logarithmic_y = QtGui.QAction("Logarithmic")
+            self.action_set_logarithmic_y = QtGui.QAction("对数刻度 (Logarithmic)")
             self.action_set_logarithmic_y.setCheckable(True)
             vertical_mode_group.addAction(self.action_set_linear_y)
             vertical_mode_group.addAction(self.action_set_logarithmic_y)
@@ -180,7 +180,7 @@ class FrequencyChart(Chart):
         self.menu.addMenu(self.y_menu)
         self.menu.addSeparator()
         self.menu.addAction(self.action_save_screenshot)
-        self.action_popout = QtGui.QAction("Popout chart")
+        self.action_popout = QtGui.QAction("独立窗口弹出图表")
         self.action_popout.triggered.connect(
             lambda: self.popout_requested.emit(self)
         )
@@ -216,16 +216,16 @@ class FrequencyChart(Chart):
 
     def contextMenuEvent(self, event):
         self.action_set_fixed_start.setText(
-            f"Start ({format_frequency_chart(self.minFrequency)})"
+            f"起始频率 ({format_frequency_chart(self.minFrequency)})"
         )
         self.action_set_fixed_stop.setText(
-            f"Stop ({format_frequency_chart(self.maxFrequency)})"
+            f"终止频率 ({format_frequency_chart(self.maxFrequency)})"
         )
         self.action_set_fixed_minimum.setText(
-            f"Minimum ({self.minDisplayValue})"
+            f"最小值 ({self.minDisplayValue})"
         )
         self.action_set_fixed_maximum.setText(
-            f"Maximum ({self.maxDisplayValue})"
+            f"最大值 ({self.maxDisplayValue})"
         )
 
         if self.fixedSpan:

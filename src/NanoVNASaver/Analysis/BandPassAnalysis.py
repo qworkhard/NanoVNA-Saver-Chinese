@@ -59,36 +59,36 @@ class BandPassAnalysis(Analysis):
                 f" in the filter passband."
             )
         )
-        layout.addRow("Result:", self.label["result"])
+        layout.addRow("分析结果:", self.label["result"])
         layout.addRow(QtW.QLabel(""))
 
-        layout.addRow("Center frequency:", self.label["freq_center"])
-        layout.addRow("Bandwidth (-3 dB):", self.label["span_3.0dB"])
-        layout.addRow("Quality factor:", self.label["q_factor"])
-        layout.addRow("Bandwidth (-6 dB):", self.label["span_6.0dB"])
+        layout.addRow("中心频率:", self.label["freq_center"])
+        layout.addRow("带宽 BW (-3 dB):", self.label["span_3.0dB"])
+        layout.addRow("品质因数 (Q值):", self.label["q_factor"])
+        layout.addRow("带宽 BW (-6 dB):", self.label["span_6.0dB"])
         layout.addRow(QtW.QLabel(""))
 
-        layout.addRow(QtW.QLabel("Lower side:"))
-        layout.addRow("Cutoff frequency:", self.label["3.0dB_l"])
-        layout.addRow("-6 dB point:", self.label["6.0dB_l"])
-        layout.addRow("-60 dB point:", self.label["60.0dB_l"])
-        layout.addRow("Roll-off:", self.label["octave_l"])
-        layout.addRow("Roll-off:", self.label["decade_l"])
+        layout.addRow(QtW.QLabel("下边带 (低频侧):"))
+        layout.addRow("截止频率:", self.label["3.0dB_l"])
+        layout.addRow("-6 dB 频点:", self.label["6.0dB_l"])
+        layout.addRow("-60 dB 频点:", self.label["60.0dB_l"])
+        layout.addRow("滚降率 (Roll-off):", self.label["octave_l"])
+        layout.addRow("滚降率 (Roll-off):", self.label["decade_l"])
         layout.addRow(QtW.QLabel(""))
 
-        layout.addRow(QtW.QLabel("Upper side:"))
-        layout.addRow("Cutoff frequency:", self.label["3.0dB_r"])
-        layout.addRow("-6 dB point:", self.label["6.0dB_r"])
-        layout.addRow("-60 dB point:", self.label["60.0dB_r"])
-        layout.addRow("Roll-off:", self.label["octave_r"])
-        layout.addRow("Roll-off:", self.label["decade_r"])
+        layout.addRow(QtW.QLabel("上边带 (高频侧):"))
+        layout.addRow("截止频率:", self.label["3.0dB_r"])
+        layout.addRow("-6 dB 频点:", self.label["6.0dB_r"])
+        layout.addRow("-60 dB 频点:", self.label["60.0dB_r"])
+        layout.addRow("滚降率 (Roll-off):", self.label["octave_r"])
+        layout.addRow("滚降率 (Roll-off):", self.label["decade_r"])
 
-        self.set_titel("Band pass filter analysis")
+        self.set_titel("带通滤波器分析")
 
     def runAnalysis(self) -> None:
         if not self.app.data.s21:
             logger.debug("No data to analyse")
-            self.set_result("No data to analyse.")
+            self.set_result("无分析数据。")
             return
 
         self.reset()

@@ -31,7 +31,7 @@ class ScreenshotWindow(QtWidgets.QLabel):
 
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Screenshot")
+        self.setWindowTitle("设备屏幕截图")
         # TODO : self.setWindowIcon(get_window_icon())
 
         QtGui.QShortcut(QtCore.Qt.Key.Key_Escape, self, self.hide)
@@ -39,15 +39,15 @@ class ScreenshotWindow(QtWidgets.QLabel):
             QtCore.Qt.ContextMenuPolicy.ActionsContextMenu
         )
 
-        self.action_original_size = QtGui.QAction("Original size")
+        self.action_original_size = QtGui.QAction("原始尺寸")
         self.action_original_size.triggered.connect(lambda: self.setScale(1))
-        self.action_2x_size = QtGui.QAction("2x size")
+        self.action_2x_size = QtGui.QAction("2倍放大")
         self.action_2x_size.triggered.connect(lambda: self.setScale(2))
-        self.action_3x_size = QtGui.QAction("3x size")
+        self.action_3x_size = QtGui.QAction("3倍放大")
         self.action_3x_size.triggered.connect(lambda: self.setScale(3))
-        self.action_4x_size = QtGui.QAction("4x size")
+        self.action_4x_size = QtGui.QAction("4倍放大")
         self.action_4x_size.triggered.connect(lambda: self.setScale(4))
-        self.action_5x_size = QtGui.QAction("5x size")
+        self.action_5x_size = QtGui.QAction("5倍放大")
         self.action_5x_size.triggered.connect(lambda: self.setScale(5))
 
         self.addAction(self.action_original_size)
@@ -55,7 +55,7 @@ class ScreenshotWindow(QtWidgets.QLabel):
         self.addAction(self.action_3x_size)
         self.addAction(self.action_4x_size)
         self.addAction(self.action_5x_size)
-        self.action_save_screenshot = QtGui.QAction("Save image")
+        self.action_save_screenshot = QtGui.QAction("保存图片")
         self.action_save_screenshot.triggered.connect(self.saveScreenshot)
         self.addAction(self.action_save_screenshot)
 
@@ -72,19 +72,19 @@ class ScreenshotWindow(QtWidgets.QLabel):
         )
         w, h = pixmap.width(), pixmap.height()
         self.action_original_size.setText(
-            "Original size (" + str(w) + "x" + str(h) + ")"
+            f"原始尺寸 ({w}x{h})"
         )
         self.action_2x_size.setText(
-            "2x size (" + str(w * 2) + "x" + str(h * 2) + ")"
+            f"2倍放大 ({w * 2}x{h * 2})"
         )
         self.action_3x_size.setText(
-            "3x size (" + str(w * 3) + "x" + str(h * 3) + ")"
+            f"3倍放大 ({w * 3}x{h * 3})"
         )
         self.action_4x_size.setText(
-            "4x size (" + str(w * 4) + "x" + str(h * 4) + ")"
+            f"4倍放大 ({w * 4}x{h * 4})"
         )
         self.action_5x_size.setText(
-            "5x size (" + str(w * 5) + "x" + str(h * 5) + ")"
+            f"5倍放大 ({w * 5}x{h * 5})"
         )
 
     def saveScreenshot(self):
@@ -92,8 +92,8 @@ class ScreenshotWindow(QtWidgets.QLabel):
             logger.info("Saving screenshot to file...")
             filename, _ = QtWidgets.QFileDialog.getSaveFileName(
                 parent=self,
-                caption="Save image",
-                filter="PNG (*.png);;All files (*.*)",
+                caption="保存图片",
+                filter="PNG 图像 (*.png);;所有文件 (*.*)",
             )
 
             logger.debug("Filename: %s", filename)

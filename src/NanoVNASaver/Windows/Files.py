@@ -36,7 +36,7 @@ class FilesWindow(QtWidgets.QWidget):
         super().__init__()
         self.app = app
 
-        self.setWindowTitle("Files")
+        self.setWindowTitle("文件导入与导出")
         self.setWindowIcon(get_window_icon())
         self.setMinimumWidth(200)
         QtGui.QShortcut(QtCore.Qt.Key.Key_Escape, self, self.hide)
@@ -44,34 +44,34 @@ class FilesWindow(QtWidgets.QWidget):
         file_window_layout = QtWidgets.QVBoxLayout()
         make_scrollable(self, file_window_layout)
 
-        load_file_control_box = QtWidgets.QGroupBox("Import file")
+        load_file_control_box = QtWidgets.QGroupBox("导入文件")
         load_file_control_box.setMaximumWidth(300)
         load_file_control_layout = QtWidgets.QFormLayout(load_file_control_box)
 
-        btn_load_sweep = QtWidgets.QPushButton("Load as sweep")
+        btn_load_sweep = QtWidgets.QPushButton("作为扫频数据加载")
         btn_load_sweep.clicked.connect(self.loadSweepFile)
-        btn_load_reference = QtWidgets.QPushButton("Load reference")
+        btn_load_reference = QtWidgets.QPushButton("加载参考基准数据")
         btn_load_reference.clicked.connect(self.loadReferenceFile)
         load_file_control_layout.addRow(btn_load_sweep)
         load_file_control_layout.addRow(btn_load_reference)
 
         file_window_layout.addWidget(load_file_control_box)
 
-        save_file_control_box = QtWidgets.QGroupBox("Export file")
+        save_file_control_box = QtWidgets.QGroupBox("导出文件")
         save_file_control_box.setMaximumWidth(300)
         save_file_control_layout = QtWidgets.QFormLayout(save_file_control_box)
 
-        btn_export_file = QtWidgets.QPushButton("Save 1-Port file (S1P)")
+        btn_export_file = QtWidgets.QPushButton("保存单端口文件 (.s1p)")
         btn_export_file.clicked.connect(lambda: self.exportFile(1))
         save_file_control_layout.addRow(btn_export_file)
 
-        btn_export_file = QtWidgets.QPushButton("Save 2-Port file (S2P)")
+        btn_export_file = QtWidgets.QPushButton("保存双端口文件 (.s2p)")
         btn_export_file.clicked.connect(lambda: self.exportFile(4))
         save_file_control_layout.addRow(btn_export_file)
 
         file_window_layout.addWidget(save_file_control_box)
 
-        btn_open_file_window = QtWidgets.QPushButton("Files ...")
+        btn_open_file_window = QtWidgets.QPushButton("文件 ...")
         btn_open_file_window.clicked.connect(
             lambda: self.app.display_window("file")
         )
@@ -79,12 +79,12 @@ class FilesWindow(QtWidgets.QWidget):
     def exportFile(self, nr_params: int = 1):
         if len(self.app.data.s11) == 0:
             QtWidgets.QMessageBox.warning(
-                self, "No data to save", "There is no data to save."
+                self, "无数据可保存", "当前没有可保存的测量数据。"
             )
             return
         if nr_params > 2 and len(self.app.data.s21) == 0:
             QtWidgets.QMessageBox.warning(
-                self, "No S21 data to save", "There is no S21 data to save."
+                self, "无 S21 数据", "当前没有可保存的 S21 数据。"
             )
             return
 
@@ -92,12 +92,12 @@ class FilesWindow(QtWidgets.QWidget):
         if nr_params == 1:
             filedialog.setDefaultSuffix("s1p")
             filedialog.setNameFilter(
-                "Touchstone 1-Port Files (*.s1p);;All files (*.*)"
+                "Touchstone 单端口文件 (*.s1p);;所有文件 (*.*)"
             )
         else:
             filedialog.setDefaultSuffix("s2p")
             filedialog.setNameFilter(
-                "Touchstone 2-Port Files (*.s2p);;All files (*.*)"
+                "Touchstone 双端口文件 (*.s2p);;所有文件 (*.*)"
             )
         filedialog.setAcceptMode(QtWidgets.QFileDialog.AcceptMode.AcceptSave)
         selected = filedialog.exec()
@@ -123,7 +123,7 @@ class FilesWindow(QtWidgets.QWidget):
 
     def loadReferenceFile(self):
         filename, _ = QtWidgets.QFileDialog.getOpenFileName(
-            filter="Touchstone Files (*.s1p *.s2p);;All files (*.*)"
+            filter="Touchstone 文件 (*.s1p *.s2p);;所有文件 (*.*)"
         )
         if filename != "":
             self.app.resetReference()
@@ -133,7 +133,7 @@ class FilesWindow(QtWidgets.QWidget):
 
     def loadSweepFile(self):
         filename, _ = QtWidgets.QFileDialog.getOpenFileName(
-            filter="Touchstone Files (*.s1p *.s2p);;All files (*.*)"
+            filter="Touchstone 文件 (*.s1p *.s2p);;所有文件 (*.*)"
         )
         if filename != "":
             self.app.data.s11 = []

@@ -86,18 +86,18 @@ class TDRChart(Chart):
         self.setContextMenuPolicy(Qt.ContextMenuPolicy.DefaultContextMenu)
         self.menu = QMenu()
 
-        self.reset = QAction("Reset")
+        self.reset = QAction("复位范围")
         self.reset.triggered.connect(self.resetDisplayLimits)
         self.menu.addAction(self.reset)
 
-        self.x_menu = QMenu("Length axis")
+        self.x_menu = QMenu("距离/长度 X 轴")
         self.mode_group = QActionGroup(self.x_menu)
-        self.action_fixed_span = QAction("Fixed span")
+        self.action_fixed_span = QAction("固定距离跨度")
         self.action_fixed_span.setCheckable(True)
         self.action_fixed_span.changed.connect(
             lambda: self.setFixedSpan(self.action_fixed_span.isChecked())
         )
-        self.action_automatic = QAction("Automatic")
+        self.action_automatic = QAction("自动范围")
         self.action_automatic.setCheckable(True)
         self.action_automatic.setChecked(True)
         self.action_automatic.changed.connect(
@@ -110,26 +110,26 @@ class TDRChart(Chart):
         self.x_menu.addSeparator()
 
         self.action_set_fixed_start = QAction(
-            f"Start ({self.min_display_length})"
+            f"起始距离 ({self.min_display_length})"
         )
         self.action_set_fixed_start.triggered.connect(self.setMinimumLength)
 
         self.action_set_fixed_stop = QAction(
-            f"Stop ({self.max_display_length})"
+            f"终止距离 ({self.max_display_length})"
         )
         self.action_set_fixed_stop.triggered.connect(self.setMaximumLength)
 
         self.x_menu.addAction(self.action_set_fixed_start)
         self.x_menu.addAction(self.action_set_fixed_stop)
 
-        self.y_menu = QMenu("Y axis")
+        self.y_menu = QMenu("数值 Y 轴")
         self.y_mode_group = QActionGroup(self.y_menu)
-        self.y_action_fixed = QAction("Fixed")
+        self.y_action_fixed = QAction("固定刻度")
         self.y_action_fixed.setCheckable(True)
         self.y_action_fixed.changed.connect(
             lambda: self.setFixedValues(self.y_action_fixed.isChecked())
         )
-        self.y_action_automatic = QAction("Automatic")
+        self.y_action_automatic = QAction("自动刻度")
         self.y_action_automatic.setCheckable(True)
         self.y_action_automatic.setChecked(True)
         self.y_action_automatic.changed.connect(
@@ -141,10 +141,10 @@ class TDRChart(Chart):
         self.y_menu.addAction(self.y_action_fixed)
         self.y_menu.addSeparator()
 
-        self.y_action_set_fixed_maximum = QAction(f"Maximum ({self.max_y_lim})")
+        self.y_action_set_fixed_maximum = QAction(f"最大值 ({self.max_y_lim})")
         self.y_action_set_fixed_maximum.triggered.connect(self.setMaximumY)
 
-        self.y_action_set_fixed_minimum = QAction(f"Minimum ({self.min_y_lim})")
+        self.y_action_set_fixed_minimum = QAction(f"最小值 ({self.min_y_lim})")
         self.y_action_set_fixed_minimum.triggered.connect(self.setMinimumY)
 
         self.y_menu.addAction(self.y_action_set_fixed_maximum)
@@ -154,7 +154,7 @@ class TDRChart(Chart):
         self.menu.addMenu(self.y_menu)
         self.menu.addSeparator()
         self.menu.addAction(self.action_save_screenshot)
-        self.action_popout = QAction("Popout chart")
+        self.action_popout = QAction("独立窗口弹出图表")
         self.action_popout.triggered.connect(
             lambda: self.popout_requested.emit(self)
         )
@@ -181,11 +181,11 @@ class TDRChart(Chart):
 
     def contextMenuEvent(self, event) -> None:
         self.action_set_fixed_start.setText(
-            f"Start ({self.min_display_length})"
+            f"起始距离 ({self.min_display_length})"
         )
-        self.action_set_fixed_stop.setText(f"Stop ({self.max_display_length})")
-        self.y_action_set_fixed_minimum.setText(f"Minimum ({self.min_y_lim})")
-        self.y_action_set_fixed_maximum.setText(f"Maximum ({self.max_y_lim})")
+        self.action_set_fixed_stop.setText(f"终止距离 ({self.max_display_length})")
+        self.y_action_set_fixed_minimum.setText(f"最小值 ({self.min_y_lim})")
+        self.y_action_set_fixed_maximum.setText(f"最大值 ({self.max_y_lim})")
         self.menu.exec(event.globalPos())
 
     def isPlotable(self, x, y) -> bool:

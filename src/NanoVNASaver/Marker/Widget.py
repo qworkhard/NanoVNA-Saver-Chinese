@@ -112,7 +112,7 @@ class Marker(QtCore.QObject, Value):
             self.index = Marker._instances
 
         if not self.name:
-            self.name = f"Marker {Marker._instances}"
+            self.name = f"标记 {Marker._instances}"
 
         self.frequencyInput = MarkerFrequencyInputWidget()
         self.frequencyInput.setMinimumHeight(20)
@@ -158,7 +158,8 @@ class Marker(QtCore.QObject, Value):
         ###############################################################
 
         self.group_box = QtWidgets.QGroupBox(self.name)
-        self.group_box.setMaximumWidth(340)
+        self.group_box.setMinimumWidth(320)
+        self.group_box.setMaximumWidth(440)
         box_layout = QtWidgets.QHBoxLayout(self.group_box)
 
         try:
@@ -182,8 +183,10 @@ class Marker(QtCore.QObject, Value):
         # line only if more then 3 selected
         self.left_form = QtWidgets.QFormLayout()
         self.left_form.setVerticalSpacing(0)
+        self.left_form.setHorizontalSpacing(8)
         self.right_form = QtWidgets.QFormLayout()
         self.right_form.setVerticalSpacing(0)
+        self.right_form.setHorizontalSpacing(8)
         box_layout.addLayout(self.left_form)
         box_layout.addWidget(line)
         box_layout.addLayout(self.right_form)
@@ -206,7 +209,7 @@ class Marker(QtCore.QObject, Value):
         self.qsettings.setValue(f"Marker{self.index}Color", self.color)
 
     def setScale(self, scale):
-        self.group_box.setMaximumWidth(int(340 * scale))
+        self.group_box.setMaximumWidth(int(440 * scale))
         self.label["actualfreq"].setMinimumWidth(int(100 * scale))
         self.label["actualfreq"].setMinimumWidth(int(100 * scale))
         self.label["returnloss"].setMinimumWidth(int(80 * scale))

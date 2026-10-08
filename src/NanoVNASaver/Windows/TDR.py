@@ -55,25 +55,25 @@ WINDOWING_FUNCTION = (
     # ("Blackman", np.blackman, lambda lens11, arg : lens11 / 0.42, None),
     ("Blackman", np.blackman, lambda lens11, arg: lens11 / (1 / 0.42), None),
     (
-        "Minimal (Kaiser, \N{GREEK SMALL LETTER BETA}=0)",
+        "极小 Minimal (Kaiser, \N{GREEK SMALL LETTER BETA}=0)",
         np.kaiser,
         kaiser_correction,
         0,
     ),
     (
-        "Normal  (Kaiser, \N{GREEK SMALL LETTER BETA}=6)",
+        "标准 Normal (Kaiser, \N{GREEK SMALL LETTER BETA}=6)",
         np.kaiser,
         kaiser_correction,
         6,
     ),
     (
-        "Strong  (Kaiser, \N{GREEK SMALL LETTER BETA}=13)",
+        "较强 Strong (Kaiser, \N{GREEK SMALL LETTER BETA}=13)",
         np.kaiser,
         kaiser_correction,
         13,
     ),
     (
-        "Maximal (Kaiser, \N{GREEK SMALL LETTER BETA}=100)",
+        "极大 Maximal (Kaiser, \N{GREEK SMALL LETTER BETA}=100)",
         np.kaiser,
         kaiser_correction,
         100,
@@ -81,13 +81,13 @@ WINDOWING_FUNCTION = (
 )
 
 CABLE_PARAMETERS = (
-    ("Jelly filled (0.64)", 0.64),
-    ("Polyethylene (0.66)", 0.66),
-    ("PTFE (Teflon) (0.70)", 0.70),
-    ("Pulp Insulation (0.72)", 0.72),
-    ("Foam or Cellular PE (0.78)", 0.78),
-    ("Semi-solid PE (SSPE) (0.84)", 0.84),
-    ("Air (Helical spacers) (0.94)", 0.94),
+    ("油膏填充 Jelly filled (0.64)", 0.64),
+    ("聚乙烯 PE (0.66)", 0.66),
+    ("特氟龙 PTFE (0.70)", 0.70),
+    ("纸浆绝缘 Pulp (0.72)", 0.72),
+    ("发泡聚乙烯 Foam PE (0.78)", 0.78),
+    ("半实心聚乙烯 SSPE (0.84)", 0.84),
+    ("空气绝缘 Air (0.94)", 0.94),
     # Lots of cable types added by Larry Goga, AE5CZ
     ("RG-6/U PE 75\N{OHM SIGN} (Belden 8215) (0.66)", 0.66),
     ("RG-6/U Foam 75\N{OHM SIGN} (Belden 9290) (0.81)", 0.81),
@@ -136,7 +136,7 @@ class TDRWindow(QtWidgets.QWidget):
         self.distance_axis: npt.NDArray[np.float64]
         self.step_response_Z: npt.NDArray[np.float64]
 
-        self.setWindowTitle("TDR")
+        self.setWindowTitle("时域反射 (TDR)")
         self.setWindowIcon(get_window_icon())
 
         QShortcut(Qt.Key.Key_Escape, self, self.hide)
@@ -145,7 +145,7 @@ class TDRWindow(QtWidgets.QWidget):
         make_scrollable(self, layout)
 
         dropdown_layout = QtWidgets.QHBoxLayout()
-        dropdown_layout.addWidget(QtWidgets.QLabel("Velocity factor"), 0)
+        dropdown_layout.addWidget(QtWidgets.QLabel("速度因子 (VF)"), 0)
 
         self.tdr_velocity_dropdown = QtWidgets.QComboBox()
         for cable_name, velocity in CABLE_PARAMETERS:
@@ -153,7 +153,7 @@ class TDRWindow(QtWidgets.QWidget):
         self.tdr_velocity_dropdown.insertSeparator(
             self.tdr_velocity_dropdown.count()
         )
-        self.tdr_velocity_dropdown.addItem("Custom", -1)
+        self.tdr_velocity_dropdown.addItem("自定义", -1)
         self.tdr_velocity_dropdown.setCurrentIndex(1)  # Default to PE (0.66)
         self.tdr_velocity_dropdown.currentIndexChanged.connect(self.updateTDR)
 
@@ -173,14 +173,14 @@ class TDRWindow(QtWidgets.QWidget):
 
         format_window_layout = QtWidgets.QHBoxLayout()
         self.format_dropdown = QtWidgets.QComboBox()
-        self.format_dropdown.addItem("|Z| (lowpass)")
-        self.format_dropdown.addItem("S11 (lowpass)")
-        self.format_dropdown.addItem("VSWR (lowpass)")
-        self.format_dropdown.addItem("Refl (lowpass)")
-        self.format_dropdown.addItem("Refl (bandpass)")
+        self.format_dropdown.addItem("|Z| (低通 lowpass)", "|Z| (lowpass)")
+        self.format_dropdown.addItem("S11 (低通 lowpass)", "S11 (lowpass)")
+        self.format_dropdown.addItem("VSWR (低通 lowpass)", "VSWR (lowpass)")
+        self.format_dropdown.addItem("反射 Refl (低通 lowpass)", "Refl (lowpass)")
+        self.format_dropdown.addItem("反射 Refl (带通 bandpass)", "Refl (bandpass)")
 
         self.format_dropdown.currentIndexChanged.connect(self.updateFormat)
-        format_window_layout.addWidget(QtWidgets.QLabel("Format"), 0)
+        format_window_layout.addWidget(QtWidgets.QLabel("格式"), 0)
         format_window_layout.addWidget(self.format_dropdown, 1)
 
         self.window_dropdown = QtWidgets.QComboBox()
@@ -201,13 +201,13 @@ class TDRWindow(QtWidgets.QWidget):
         self.window_dropdown.currentIndexChanged.connect(self.updateTDR)
         self.window_dropdown.setCurrentIndex(0)
 
-        format_window_layout.addWidget(QtWidgets.QLabel("Window"), 0)
+        format_window_layout.addWidget(QtWidgets.QLabel("窗函数"), 0)
         format_window_layout.addWidget(self.window_dropdown, 1)
         format_window_layout.addWidget(QtWidgets.QLabel(" "), 1)
         layout.addRow(format_window_layout)
 
         self.tdr_result_label = QtWidgets.QLabel()
-        layout.addRow("Estimated cable length:", self.tdr_result_label)
+        layout.addRow("估算线缆长度:", self.tdr_result_label)
         layout.addRow(self.app.tdr_chart)
 
     def updateFormat(self):
@@ -215,7 +215,7 @@ class TDRWindow(QtWidgets.QWidget):
         self.updateTDR()
 
     def updateTDR(self):
-        TDR_format = self.format_dropdown.currentText()
+        TDR_format = self.format_dropdown.currentData() or self.format_dropdown.currentText()
         TDR_window = self.window_dropdown.currentData()
         if self.tdr_velocity_dropdown.currentData() == -1:
             self.tdr_velocity_input.setDisabled(False)

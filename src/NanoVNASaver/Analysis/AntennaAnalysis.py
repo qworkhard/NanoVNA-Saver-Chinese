@@ -68,7 +68,7 @@ class MagLoopAnalysis(VSWRAnalysis):
             self.layout.addRow(
                 "",
                 QtWidgets.QLabel(
-                    "Multiple minimums, not magloop or try to lower VSWR limit"
+                    "存在多个极小值点，非小环天线特性或请尝试降低 VSWR 阈值"
                 ),
             )
             return
@@ -85,7 +85,7 @@ class MagLoopAnalysis(VSWRAnalysis):
                 Q = self.app.data.s11[lowest].freq / (
                     self.app.data.s11[end].freq - self.app.data.s11[start].freq
                 )
-                self.layout.addRow("Q", QtWidgets.QLabel(f"{int(Q)}"))
+                self.layout.addRow("品质因数 (Q值)", QtWidgets.QLabel(f"{int(Q)}"))
                 new_start = self.app.data.s11[start].freq - self.bandwith
                 new_end = self.app.data.s11[end].freq + self.bandwith
                 logger.debug(

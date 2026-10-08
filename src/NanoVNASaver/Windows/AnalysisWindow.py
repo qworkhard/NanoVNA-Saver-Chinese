@@ -51,7 +51,7 @@ class AnalysisWindow(QtWidgets.QWidget):
         super().__init__()
 
         self.app = app
-        self.setWindowTitle("Sweep analysis")
+        self.setWindowTitle("扫频数据分析")
         self.setWindowIcon(get_window_icon())
 
         QtGui.QShortcut(QtCore.Qt.Key.Key_Escape, self, self.hide)
@@ -59,47 +59,47 @@ class AnalysisWindow(QtWidgets.QWidget):
         layout = QtWidgets.QVBoxLayout()
         make_scrollable(self, layout)
 
-        select_analysis_box = QtWidgets.QGroupBox("Select analysis")
+        select_analysis_box = QtWidgets.QGroupBox("选择分析模式")
         select_analysis_layout = QtWidgets.QFormLayout(select_analysis_box)
         self.analysis_list = QtWidgets.QComboBox()
-        self.analysis_list.addItem("Low-pass filter", LowPassAnalysis(self.app))
+        self.analysis_list.addItem("低通滤波器 (Low-pass)", LowPassAnalysis(self.app))
         self.analysis_list.addItem(
-            "Band-pass filter", BandPassAnalysis(self.app)
+            "带通滤波器 (Band-pass)", BandPassAnalysis(self.app)
         )
         self.analysis_list.addItem(
-            "High-pass filter", HighPassAnalysis(self.app)
+            "高通滤波器 (High-pass)", HighPassAnalysis(self.app)
         )
         self.analysis_list.addItem(
-            "Band-stop filter", BandStopAnalysis(self.app)
+            "带阻滤波器 (Band-stop)", BandStopAnalysis(self.app)
         )
         self.analysis_list.addItem(
-            "Simple Peak search", SimplePeakSearchAnalysis(self.app)
+            "简易峰值搜索", SimplePeakSearchAnalysis(self.app)
         )
-        self.analysis_list.addItem("Peak search", PeakSearchAnalysis(self.app))
-        self.analysis_list.addItem("VSWR analysis", VSWRAnalysis(self.app))
+        self.analysis_list.addItem("峰值搜索", PeakSearchAnalysis(self.app))
+        self.analysis_list.addItem("VSWR 驻波比分析", VSWRAnalysis(self.app))
         self.analysis_list.addItem(
-            "Resonance analysis", ResonanceAnalysis(self.app)
+            "谐振点分析", ResonanceAnalysis(self.app)
         )
-        self.analysis_list.addItem("HWEF analysis", EFHWAnalysis(self.app))
+        self.analysis_list.addItem("半波端馈分析 (EFHW)", EFHWAnalysis(self.app))
         self.analysis_list.addItem(
-            "MagLoop analysis", MagLoopAnalysis(self.app)
+            "小环天线分析 (MagLoop)", MagLoopAnalysis(self.app)
         )
-        select_analysis_layout.addRow("Analysis type", self.analysis_list)
+        select_analysis_layout.addRow("分析类型", self.analysis_list)
         self.analysis_list.currentIndexChanged.connect(self.updateSelection)
 
-        btn_run_analysis = QtWidgets.QPushButton("Run analysis")
+        btn_run_analysis = QtWidgets.QPushButton("执行分析")
         btn_run_analysis.clicked.connect(self.runAnalysis)
         select_analysis_layout.addRow(btn_run_analysis)
 
         self.checkbox_run_automatically = QtWidgets.QCheckBox(
-            "Run automatically"
+            "自动执行分析"
         )
         self.checkbox_run_automatically.stateChanged.connect(
             self.toggleAutomaticRun
         )
         select_analysis_layout.addRow(self.checkbox_run_automatically)
 
-        analysis_box = QtWidgets.QGroupBox("Analysis")
+        analysis_box = QtWidgets.QGroupBox("分析结果")
         analysis_box.setSizePolicy(
             QtWidgets.QSizePolicy.Policy.MinimumExpanding,
             QtWidgets.QSizePolicy.Policy.MinimumExpanding,

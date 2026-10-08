@@ -43,7 +43,7 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
         super().__init__()
 
         self.app = app
-        self.setWindowTitle("Display settings")
+        self.setWindowTitle("显示设置")
         self.setWindowIcon(get_window_icon())
         self.marker_window = MarkerSettingsWindow(self.app)
         self.callback_params: dict[str, tuple[str, str]] = {}
@@ -56,17 +56,17 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
         left_layout = QtWidgets.QVBoxLayout()
         layout.addLayout(left_layout)
 
-        display_options_box = QtWidgets.QGroupBox("Options")
+        display_options_box = QtWidgets.QGroupBox("常规选项")
         display_options_layout = QtWidgets.QFormLayout(display_options_box)
 
         self.returnloss_group = QtWidgets.QButtonGroup()
-        self.returnloss_is_negative = QtWidgets.QRadioButton("Negative")
-        self.returnloss_is_positive = QtWidgets.QRadioButton("Positive")
+        self.returnloss_is_negative = QtWidgets.QRadioButton("负值 (-)")
+        self.returnloss_is_positive = QtWidgets.QRadioButton("正值 (+)")
         self.returnloss_group.addButton(self.returnloss_is_positive)
         self.returnloss_group.addButton(self.returnloss_is_negative)
 
         display_options_layout.addRow(
-            "Return loss is:", self.returnloss_is_negative
+            "Return Loss 极性:", self.returnloss_is_negative
         )
         display_options_layout.addRow("", self.returnloss_is_positive)
 
@@ -81,15 +81,15 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
         self.returnloss_is_positive.toggled.connect(self.changeReturnLoss)
         self.changeReturnLoss()
 
-        self.show_lines_option = QtWidgets.QCheckBox("Show lines")
+        self.show_lines_option = QtWidgets.QCheckBox("显示连线")
         show_lines_label = QtWidgets.QLabel(
-            "Displays a thin line between data points"
+            "在各采样数据点之间绘制连线"
         )
         self.show_lines_option.stateChanged.connect(self.changeShowLines)
         display_options_layout.addRow(self.show_lines_option, show_lines_label)
 
-        self.dark_mode_option = QtWidgets.QCheckBox("Dark mode")
-        dark_mode_label = QtWidgets.QLabel("Black background with white text")
+        self.dark_mode_option = QtWidgets.QCheckBox("暗黑模式")
+        dark_mode_label = QtWidgets.QLabel("黑色背景与高亮文本")
         self.dark_mode_option.stateChanged.connect(self.changeDarkMode)
         display_options_layout.addRow(self.dark_mode_option, dark_mode_label)
 
@@ -105,7 +105,7 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
         self.pointSizeInput.setSuffix(" px")
         self.pointSizeInput.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
         self.pointSizeInput.valueChanged.connect(self.changePointSize)
-        display_options_layout.addRow("Point size", self.pointSizeInput)
+        display_options_layout.addRow("采样点大小", self.pointSizeInput)
 
         self.lineThicknessInput = QtWidgets.QSpinBox()
         self.lineThicknessInput.setMinimumHeight(20)
@@ -117,7 +117,7 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
         self.lineThicknessInput.setSuffix(" px")
         self.lineThicknessInput.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
         self.lineThicknessInput.valueChanged.connect(self.changeLineThickness)
-        display_options_layout.addRow("Line thickness", self.lineThicknessInput)
+        display_options_layout.addRow("线条粗细", self.lineThicknessInput)
 
         self.markerSizeInput = QtWidgets.QSpinBox()
         self.markerSizeInput.setMinimumHeight(20)
@@ -129,13 +129,13 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
         self.markerSizeInput.setSuffix(" px")
         self.markerSizeInput.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
         self.markerSizeInput.valueChanged.connect(self.changeMarkerSize)
-        display_options_layout.addRow("Marker size", self.markerSizeInput)
+        display_options_layout.addRow("标记尺寸", self.markerSizeInput)
 
         self.show_marker_number_option = QtWidgets.QCheckBox(
-            "Show marker numbers"
+            "显示标记序号"
         )
         show_marker_number_label = QtWidgets.QLabel(
-            "Displays the marker number next to the marker"
+            "在图表标记旁显示其编号"
         )
         self.show_marker_number_option.stateChanged.connect(
             self.changeShowMarkerNumber
@@ -144,9 +144,9 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
             self.show_marker_number_option, show_marker_number_label
         )
 
-        self.filled_marker_option = QtWidgets.QCheckBox("Filled markers")
+        self.filled_marker_option = QtWidgets.QCheckBox("实心标记")
         filled_marker_label = QtWidgets.QLabel(
-            "Shows the marker as a filled triangle"
+            "将标记显示为实心三角形"
         )
         self.filled_marker_option.stateChanged.connect(self.changeFilledMarkers)
         display_options_layout.addRow(
@@ -155,13 +155,13 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
 
         self.marker_tip_group = QtWidgets.QButtonGroup()
         self.marker_at_center = QtWidgets.QRadioButton(
-            "At the center of the marker"
+            "标记中心点"
         )
-        self.marker_at_tip = QtWidgets.QRadioButton("At the tip of the marker")
+        self.marker_at_tip = QtWidgets.QRadioButton("标记顶点 (指示尖端)")
         self.marker_tip_group.addButton(self.marker_at_center)
         self.marker_tip_group.addButton(self.marker_at_tip)
 
-        display_options_layout.addRow("Data point is:", self.marker_at_center)
+        display_options_layout.addRow("数据点定位基准:", self.marker_at_center)
         display_options_layout.addRow("", self.marker_at_tip)
 
         self.marker_at_tip.setChecked(app_config.chart.marker_at_tip)
@@ -170,10 +170,10 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
         self.marker_at_tip.toggled.connect(self.changeMarkerAtTip)
         self.changeMarkerAtTip()
 
-        color_options_box = QtWidgets.QGroupBox("Chart colors")
+        color_options_box = QtWidgets.QGroupBox("图表配色")
         color_options_layout = QtWidgets.QFormLayout(color_options_box)
 
-        self.use_custom_colors = QtWidgets.QCheckBox("Use custom chart colors")
+        self.use_custom_colors = QtWidgets.QCheckBox("使用自定义图表配色")
         self.use_custom_colors.stateChanged.connect(self.updateCharts)
         color_options_layout.addRow(self.use_custom_colors)
 
@@ -182,7 +182,7 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
         right_layout = QtWidgets.QVBoxLayout()
         layout.addLayout(right_layout)
 
-        font_options_box = QtWidgets.QGroupBox("Font")
+        font_options_box = QtWidgets.QGroupBox("字体")
         font_options_layout = QtWidgets.QFormLayout(font_options_box)
         self.font_dropdown = QtWidgets.QComboBox()
         self.font_dropdown.setMinimumHeight(20)
@@ -191,22 +191,22 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
         self.changeFont(str(app_config.gui.font_size))
 
         self.font_dropdown.currentTextChanged.connect(self.changeFont)
-        font_options_layout.addRow("Font size", self.font_dropdown)
+        font_options_layout.addRow("字体大小", self.font_dropdown)
 
-        bands_box = QtWidgets.QGroupBox("Bands")
+        bands_box = QtWidgets.QGroupBox("工作频段 (Bands)")
         bands_layout = QtWidgets.QFormLayout(bands_box)
 
-        self.show_bands = QtWidgets.QCheckBox("Show bands")
+        self.show_bands = QtWidgets.QCheckBox("显示频段标识")
         self.show_bands.setChecked(self.app.bands.enabled)
         self.show_bands.stateChanged.connect(
             lambda: self.setShowBands(self.show_bands.isChecked())
         )
         bands_layout.addRow(self.show_bands)
         bands_layout.addRow(
-            "Chart bands", self.color_picker("BandsColor", "bands")
+            "频段显示颜色", self.color_picker("BandsColor", "bands")
         )
 
-        self.btn_manage_bands = QtWidgets.QPushButton("Manage bands")
+        self.btn_manage_bands = QtWidgets.QPushButton("管理频段 ...")
         self.btn_manage_bands.setMinimumHeight(20)
 
         self.bandsWindow = BandsWindow(self.app)
@@ -214,7 +214,7 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
 
         bands_layout.addRow(self.btn_manage_bands)
 
-        vswr_marker_box = QtWidgets.QGroupBox("VSWR Markers")
+        vswr_marker_box = QtWidgets.QGroupBox("VSWR 辅助线")
         vswr_marker_layout = QtWidgets.QFormLayout(vswr_marker_box)
 
         self.vswrMarkers: list[float] = self.app.settings.value(
@@ -229,7 +229,7 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
             )
 
         vswr_marker_layout.addRow(
-            "VSWR Markers", self.color_picker("VSWRColor", "swr")
+            "辅助线颜色", self.color_picker("VSWRColor", "swr")
         )
 
         self.vswr_marker_dropdown = QtWidgets.QComboBox()
@@ -245,9 +245,9 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
                     c.addSWRMarker(m)
 
         self.vswr_marker_dropdown.setCurrentIndex(0)
-        btn_add_vswr_marker = QtWidgets.QPushButton("Add ...")
+        btn_add_vswr_marker = QtWidgets.QPushButton("添加 ...")
         btn_add_vswr_marker.setMinimumHeight(20)
-        btn_remove_vswr_marker = QtWidgets.QPushButton("Remove")
+        btn_remove_vswr_marker = QtWidgets.QPushButton("删除")
         btn_remove_vswr_marker.setMinimumHeight(20)
         vswr_marker_btn_layout = QtWidgets.QHBoxLayout()
         vswr_marker_btn_layout.addWidget(btn_add_vswr_marker)
@@ -257,16 +257,16 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
         btn_add_vswr_marker.clicked.connect(self.addVSWRMarker)
         btn_remove_vswr_marker.clicked.connect(self.removeVSWRMarker)
 
-        markers_box = QtWidgets.QGroupBox("Markers")
+        markers_box = QtWidgets.QGroupBox("频点标记 (Marker)")
         markers_layout = QtWidgets.QFormLayout(markers_box)
 
-        btn_add_marker = QtWidgets.QPushButton("Add")
+        btn_add_marker = QtWidgets.QPushButton("添加标记")
         btn_add_marker.setMinimumHeight(30)
         btn_add_marker.clicked.connect(self.addMarker)
-        self.btn_remove_marker = QtWidgets.QPushButton("Remove")
+        self.btn_remove_marker = QtWidgets.QPushButton("删除标记")
         self.btn_remove_marker.setMinimumHeight(30)
         self.btn_remove_marker.clicked.connect(self.removeMarker)
-        btn_marker_settings = QtWidgets.QPushButton("Settings ...")
+        btn_marker_settings = QtWidgets.QPushButton("标记设置 ...")
         btn_marker_settings.setMinimumHeight(30)
         btn_marker_settings.clicked.connect(self.displayMarkerWindow)
 
@@ -277,7 +277,7 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
 
         markers_layout.addRow(marker_btn_layout)
 
-        charts_box = QtWidgets.QGroupBox("Displayed charts")
+        charts_box = QtWidgets.QGroupBox("显示图表布局")
         charts_layout = QtWidgets.QGridLayout(charts_box)
 
         selections = [c.name for c in self.app.selectable_charts]
@@ -365,12 +365,12 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
 
     def trace_colors(self, layout: QtWidgets.QLayout) -> None:
         for setting, name, attr in (
-            ("SweepColor", "Sweep color", "sweep"),
-            ("SecondarySweepColor", "Second sweep color", "sweep_secondary"),
-            ("ReferenceColor", "Reference color", "reference"),
+            ("SweepColor", "扫频轨迹颜色", "sweep"),
+            ("SecondarySweepColor", "第二扫频轨迹", "sweep_secondary"),
+            ("ReferenceColor", "参考基准颜色", "reference"),
             (
                 "SecondaryReferenceColor",
-                "Second reference color",
+                "第二参考轨迹",
                 "reference_secondary",
             ),
         ):
@@ -379,9 +379,9 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
 
     def custom_colors(self, layout: QtWidgets.QLayout) -> None:
         for setting, name, attr in (
-            ("BackgroundColor", "Chart background", "background"),
-            ("ForegroundColor", "Chart foreground", "foreground"),
-            ("TextColor", "Chart text", "text"),
+            ("BackgroundColor", "图表背景颜色", "background"),
+            ("ForegroundColor", "图表前景/坐标轴", "foreground"),
+            ("TextColor", "图表文本颜色", "text"),
         ):
             cp = self.color_picker(setting, attr)
             layout.addRow(name, cp)
@@ -584,8 +584,8 @@ class DisplaySettingsWindow(QtWidgets.QWidget):
     def addVSWRMarker(self) -> None:
         value, selected = QtWidgets.QInputDialog.getDouble(
             self,
-            "Add VSWR Marker",
-            "VSWR value to show:",
+            "添加 VSWR 标记线",
+            "要显示的 VSWR 数值:",
             minValue=1.001,
             decimals=3,
         )

@@ -51,11 +51,11 @@ class VSWRAnalysis(Analysis):
         self.input_vswr_limit.setDecimals(2)
 
         self.checkbox_move_marker = QtWidgets.QCheckBox()
-        self.layout.addRow(QtWidgets.QLabel("<b>Settings</b>"))
-        self.layout.addRow("VSWR limit", self.input_vswr_limit)
+        self.layout.addRow(QtWidgets.QLabel("<b>分析设置</b>"))
+        self.layout.addRow("VSWR 阈值上限", self.input_vswr_limit)
         self.layout.addRow(QHLine())
 
-        self.results_label = QtWidgets.QLabel("<b>Results</b>")
+        self.results_label = QtWidgets.QLabel("<b>分析结果</b>")
         self.layout.addRow(self.results_label)
 
         self.minimums: list[int] = []
@@ -85,7 +85,7 @@ class VSWRAnalysis(Analysis):
         if not minima:
             self.layout.addRow(
                 QtWidgets.QLabel(
-                    f"No areas found with VSWR below {format_vswr(threshold)}."
+                    f"未找到 VSWR 低于 {format_vswr(threshold)} 的频段。"
                 )
             )
             return
@@ -94,20 +94,20 @@ class VSWRAnalysis(Analysis):
             rng = At.take_from_idx(data, idx, lambda i: i[1] < threshold)
             begin, end = rng[0], rng[-1]
             self.layout.addRow(
-                "Start", QtWidgets.QLabel(format_frequency(s11[begin].freq))
+                "起始频率", QtWidgets.QLabel(format_frequency(s11[begin].freq))
             )
             self.layout.addRow(
-                "Minimum",
+                "最低点频率",
                 QtWidgets.QLabel(
                     f"{format_frequency(s11[idx].freq)}"
                     f" ({round(s11[idx].vswr, 2)})"
                 ),
             )
             self.layout.addRow(
-                "End", QtWidgets.QLabel(format_frequency(s11[end].freq))
+                "终止频率", QtWidgets.QLabel(format_frequency(s11[end].freq))
             )
             self.layout.addRow(
-                "Span",
+                "频跨",
                 QtWidgets.QLabel(
                     format_frequency((s11[end].freq - s11[begin].freq))
                 ),

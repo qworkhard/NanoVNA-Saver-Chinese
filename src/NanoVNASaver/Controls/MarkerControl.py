@@ -36,14 +36,14 @@ class ShowButton(QtWidgets.QPushButton):
     def setText(self, text: str = ""):
         app_config = get_app_config()
         if not text:
-            text = "Show data" if app_config.gui.markers_hidden else "Hide data"
+            text = "显示数据" if app_config.gui.markers_hidden else "隐藏数据"
         super().setText(text)
-        self.setToolTip("Toggle visibility of marker readings area")
+        self.setToolTip("切换标记读数区域的显示状态")
 
 
 class MarkerControl(Control):
     def __init__(self, app: "vna_app"):
-        super().__init__(app, "Markers")
+        super().__init__(app, "频点标记 (Marker)")
 
         app_config = get_app_config()
         for i in range(app_config.chart.marker_count):
@@ -56,10 +56,10 @@ class MarkerControl(Control):
             if i == 0:
                 marker.isMouseControlledRadioButton.setChecked(True)
 
-        self.check_delta = QCheckBox("Enable Delta Marker")
+        self.check_delta = QCheckBox("启用差值标记")
         self.check_delta.toggled.connect(self.toggle_delta)
 
-        self.check_delta_reference = QCheckBox("Reference")
+        self.check_delta_reference = QCheckBox("参考基准")
         self.check_delta_reference.toggled.connect(self.toggle_delta_reference)
 
         layout2 = QtWidgets.QHBoxLayout()
@@ -73,7 +73,7 @@ class MarkerControl(Control):
         self.showMarkerButton.setText()
         self.showMarkerButton.clicked.connect(self.toggle_frame)
 
-        lock_radiobutton = QtWidgets.QRadioButton("Locked")
+        lock_radiobutton = QtWidgets.QRadioButton("锁定")
         lock_radiobutton.setLayoutDirection(
             QtCore.Qt.LayoutDirection.RightToLeft
         )
@@ -103,10 +103,10 @@ class MarkerControl(Control):
         self.app.marker_ref = bool(self.check_delta_reference.isChecked())
 
         if self.app.marker_ref:
-            new_name = "Delta Reference - Marker 1"
+            new_name = "差值参考 - 标记 1"
 
         else:
-            new_name = "Delta Marker 2 - Marker 1"
+            new_name = "差值 标记 2 - 标记 1"
             # FIXME: reset
         self.app.delta_marker.group_box.setTitle(new_name)
         self.app.delta_marker.resetLabels()

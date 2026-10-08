@@ -29,7 +29,7 @@ class LowPassAnalysis(HighPassAnalysis):
     def __init__(self, app):
         super().__init__(app)
 
-        self.set_titel("Lowpass filter analysis")
+        self.set_titel("低通滤波器分析")
 
     def find_cutoffs(
         self, gains: list[float], peak: int, peak_db: float

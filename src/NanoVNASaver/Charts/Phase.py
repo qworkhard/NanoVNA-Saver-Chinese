@@ -45,7 +45,7 @@ class PhaseChart(FrequencyChart):
         self.maxDisplayValue = 180
 
         self.y_menu.addSeparator()
-        self.action_unwrap = QAction("Unwrap")
+        self.action_unwrap = QAction("相位解缠绕 (Unwrap)")
         self.action_unwrap.setCheckable(True)
         self.action_unwrap.triggered.connect(
             lambda: self.setUnwrap(self.action_unwrap.isChecked())

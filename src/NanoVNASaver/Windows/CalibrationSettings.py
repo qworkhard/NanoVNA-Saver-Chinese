@@ -31,8 +31,8 @@ from .ui import get_window_icon
 logger = logging.getLogger(__name__)
 
 
-def _format_cal_label(size: int, prefix: str = "Set") -> str:
-    return f"{prefix} ({size} points)"
+def _format_cal_label(size: int, prefix: str = "已设置") -> str:
+    return f"{prefix} ({size} 点)"
 
 
 def getFloatValue(text: str) -> float:
@@ -50,7 +50,7 @@ class CalibrationWindow(QtWidgets.QWidget):
         self.app = app
 
         self.setMinimumWidth(450)
-        self.setWindowTitle("Calibration")
+        self.setWindowTitle("校准")
         self.setWindowIcon(get_window_icon())
         self.setSizePolicy(
             QtWidgets.QSizePolicy.Policy.MinimumExpanding,
@@ -67,25 +67,33 @@ class CalibrationWindow(QtWidgets.QWidget):
 
         make_scrollable(self, top_layout)
 
-        calibration_status_group = QtWidgets.QGroupBox("Active calibration")
+        calibration_status_group = QtWidgets.QGroupBox("当前有效校准")
         calibration_status_layout = QtWidgets.QFormLayout()
-        self.calibration_status_label = QtWidgets.QLabel("Device calibration")
+        self.calibration_status_label = QtWidgets.QLabel("设备硬件校准")
         self.calibration_source_label = QtWidgets.QLabel("NanoVNA")
         calibration_status_layout.addRow(
-            "Calibration:", self.calibration_status_label
+            "校准状态:", self.calibration_status_label
         )
         calibration_status_layout.addRow(
-            "Source:", self.calibration_source_label
+            "校准源:", self.calibration_source_label
         )
         calibration_status_group.setLayout(calibration_status_layout)
         left_layout.addWidget(calibration_status_group)
 
-        calibration_control_group = QtWidgets.QGroupBox("Calibrate")
+        calibration_control_group = QtWidgets.QGroupBox("校准采集")
         calibration_control_layout = QtWidgets.QFormLayout(
             calibration_control_group
         )
         cal_btn = {}
         self.cal_label = {}
+        cal_btn_names = {
+            "short": "短路 (Short)",
+            "open": "开路 (Open)",
+            "load": "负载 (Load)",
+            "through": "直通 (Thru)",
+            "thrurefl": "直通反射 (Thru Refl)",
+            "isolation": "隔离度 (Isolation)",
+        }
         for label_name in (
             "short",
             "open",
@@ -94,8 +102,10 @@ class CalibrationWindow(QtWidgets.QWidget):
             "thrurefl",
             "isolation",
         ):
-            self.cal_label[label_name] = QtWidgets.QLabel("Uncalibrated")
-            cal_btn[label_name] = QtWidgets.QPushButton(label_name.capitalize())
+            self.cal_label[label_name] = QtWidgets.QLabel("未校准")
+            cal_btn[label_name] = QtWidgets.QPushButton(
+                cal_btn_names.get(label_name, label_name.capitalize())
+            )
             cal_btn[label_name].setMinimumHeight(20)
             cal_btn[label_name].clicked.connect(
                 partial(self.manual_save, label_name)
@@ -114,21 +124,21 @@ class CalibrationWindow(QtWidgets.QWidget):
 
         calibration_control_layout.addRow(QtWidgets.QLabel(""))
         calibration_control_layout.addRow(
-            "Offset delay", self.input_offset_delay
+            "偏置时延 (Offset Delay)", self.input_offset_delay
         )
 
-        self.btn_automatic = QtWidgets.QPushButton("Calibration assistant")
+        self.btn_automatic = QtWidgets.QPushButton("校准向导")
         self.btn_automatic.setMinimumHeight(20)
         calibration_control_layout.addRow(self.btn_automatic)
         self.btn_automatic.clicked.connect(self.automaticCalibration)
 
         apply_reset_layout = QtWidgets.QHBoxLayout()
 
-        btn_apply = QtWidgets.QPushButton("Apply")
+        btn_apply = QtWidgets.QPushButton("应用")
         btn_apply.setMinimumHeight(20)
         btn_apply.clicked.connect(self.calculate)
 
-        btn_reset = QtWidgets.QPushButton("Reset")
+        btn_reset = QtWidgets.QPushButton("复位")
         btn_reset.setMinimumHeight(20)
         btn_reset.clicked.connect(self.reset)
 
@@ -139,7 +149,7 @@ class CalibrationWindow(QtWidgets.QWidget):
 
         left_layout.addWidget(calibration_control_group)
 
-        calibration_notes_group = QtWidgets.QGroupBox("Notes")
+        calibration_notes_group = QtWidgets.QGroupBox("备注说明")
         calibration_notes_layout = QtWidgets.QVBoxLayout(
             calibration_notes_group
         )
@@ -148,12 +158,12 @@ class CalibrationWindow(QtWidgets.QWidget):
 
         left_layout.addWidget(calibration_notes_group)
 
-        file_box = QtWidgets.QGroupBox("Files")
+        file_box = QtWidgets.QGroupBox("校准文件")
         file_layout = QtWidgets.QFormLayout(file_box)
-        btn_save_file = QtWidgets.QPushButton("Save calibration")
+        btn_save_file = QtWidgets.QPushButton("保存校准")
         btn_save_file.setMinimumHeight(20)
         btn_save_file.clicked.connect(lambda: self.saveCalibration())
-        btn_load_file = QtWidgets.QPushButton("Load calibration")
+        btn_load_file = QtWidgets.QPushButton("加载校准")
         btn_load_file.setMinimumHeight(20)
         btn_load_file.clicked.connect(lambda: self.loadCalibration())
 
@@ -165,11 +175,11 @@ class CalibrationWindow(QtWidgets.QWidget):
 
         left_layout.addWidget(file_box)
 
-        cal_standard_box = QtWidgets.QGroupBox("Calibration standards")
+        cal_standard_box = QtWidgets.QGroupBox("校准件标准 (Standards)")
         cal_standard_layout = QtWidgets.QFormLayout(cal_standard_box)
-        self.use_ideal_values = QtWidgets.QRadioButton("Use ideal values")
-        self.use_s1p_files = QtWidgets.QRadioButton("Use s1p files")
-        self.use_coefficients = QtWidgets.QRadioButton("Use coefficients")
+        self.use_ideal_values = QtWidgets.QRadioButton("使用理想值")
+        self.use_s1p_files = QtWidgets.QRadioButton("使用 S1P 文件")
+        self.use_coefficients = QtWidgets.QRadioButton("使用多项式系数")
 
         self.use_ideal_values.setChecked(True)
         self.radio_group = QtWidgets.QButtonGroup(self)
@@ -184,9 +194,9 @@ class CalibrationWindow(QtWidgets.QWidget):
         self.radio_layout.addWidget(self.use_coefficients)
         cal_standard_layout.addRow(self.radio_layout)
 
-        self.file_button_short = QtWidgets.QPushButton("Short S1P file")
-        self.file_button_open = QtWidgets.QPushButton("Open S1P file")
-        self.file_button_load = QtWidgets.QPushButton("Load S1P file")
+        self.file_button_short = QtWidgets.QPushButton("短路 (Short) S1P 文件")
+        self.file_button_open = QtWidgets.QPushButton("开路 (Open) S1P 文件")
+        self.file_button_load = QtWidgets.QPushButton("负载 (Load) S1P 文件")
         self.file_button_short.setEnabled(False)
         self.file_button_open.setEnabled(False)
         self.file_button_load.setEnabled(False)
@@ -199,7 +209,7 @@ class CalibrationWindow(QtWidgets.QWidget):
         self.file_button_short.clicked.connect(self.select_file_short)
         self.file_button_load.clicked.connect(self.select_file_load)
 
-        self.cal_short_box = QtWidgets.QGroupBox("Short")
+        self.cal_short_box = QtWidgets.QGroupBox("短路 (Short)")
         cal_short_form = QtWidgets.QFormLayout(self.cal_short_box)
         self.cal_short_box.setDisabled(True)
         self.short_l0_input = QtWidgets.QLineEdit("0")
@@ -216,9 +226,9 @@ class CalibrationWindow(QtWidgets.QWidget):
         cal_short_form.addRow("L1 (H(e-24))", self.short_l1_input)
         cal_short_form.addRow("L2 (H(e-33))", self.short_l2_input)
         cal_short_form.addRow("L3 (H(e-42))", self.short_l3_input)
-        cal_short_form.addRow("Offset Delay (ps)", self.short_length)
+        cal_short_form.addRow("偏置时延 (Offset Delay) (ps)", self.short_length)
 
-        self.cal_open_box = QtWidgets.QGroupBox("Open")
+        self.cal_open_box = QtWidgets.QGroupBox("开路 (Open)")
         cal_open_form = QtWidgets.QFormLayout(self.cal_open_box)
         self.cal_open_box.setDisabled(True)
         self.open_c0_input = QtWidgets.QLineEdit("50")
@@ -235,9 +245,9 @@ class CalibrationWindow(QtWidgets.QWidget):
         cal_open_form.addRow("C1 (F(e-27))", self.open_c1_input)
         cal_open_form.addRow("C2 (F(e-36))", self.open_c2_input)
         cal_open_form.addRow("C3 (F(e-45))", self.open_c3_input)
-        cal_open_form.addRow("Offset Delay (ps)", self.open_length)
+        cal_open_form.addRow("偏置时延 (Offset Delay) (ps)", self.open_length)
 
-        self.cal_load_box = QtWidgets.QGroupBox("Load")
+        self.cal_load_box = QtWidgets.QGroupBox("负载 (Load)")
         cal_load_form = QtWidgets.QFormLayout(self.cal_load_box)
         self.cal_load_box.setDisabled(True)
         self.load_resistance = QtWidgets.QLineEdit("50")
@@ -249,24 +259,24 @@ class CalibrationWindow(QtWidgets.QWidget):
         # self.load_capacitance.setDisabled(True)  # Not yet implemented
         self.load_length = QtWidgets.QLineEdit("0")
         self.load_length.setMinimumHeight(20)
-        cal_load_form.addRow("Resistance (\N{OHM SIGN})", self.load_resistance)
-        cal_load_form.addRow("Inductance (H(e-12))", self.load_inductance)
-        cal_load_form.addRow("Capacitance (F(e-15))", self.load_capacitance)
-        cal_load_form.addRow("Offset Delay (ps)", self.load_length)
+        cal_load_form.addRow("电阻 (Resistance) (\N{OHM SIGN})", self.load_resistance)
+        cal_load_form.addRow("电感 (Inductance) (H(e-12))", self.load_inductance)
+        cal_load_form.addRow("电容 (Capacitance) (F(e-15))", self.load_capacitance)
+        cal_load_form.addRow("偏置时延 (Offset Delay) (ps)", self.load_length)
 
-        self.cal_through_box = QtWidgets.QGroupBox("Through")
+        self.cal_through_box = QtWidgets.QGroupBox("直通 (Thru)")
         cal_through_form = QtWidgets.QFormLayout(self.cal_through_box)
         self.cal_through_box.setDisabled(True)
         self.through_length = QtWidgets.QLineEdit("0")
         self.through_length.setMinimumHeight(20)
-        cal_through_form.addRow("Offset Delay (ps)", self.through_length)
+        cal_through_form.addRow("偏置时延 (Offset Delay) (ps)", self.through_length)
 
         cal_standard_layout.addWidget(self.cal_short_box)
         cal_standard_layout.addWidget(self.cal_open_box)
         cal_standard_layout.addWidget(self.cal_load_box)
         cal_standard_layout.addWidget(self.cal_through_box)
 
-        self.cal_standard_save_box = QtWidgets.QGroupBox("Saved settings")
+        self.cal_standard_save_box = QtWidgets.QGroupBox("已存校准件配置")
         cal_standard_save_layout = QtWidgets.QVBoxLayout(
             self.cal_standard_save_box
         )
@@ -277,13 +287,13 @@ class CalibrationWindow(QtWidgets.QWidget):
         self.listCalibrationStandards()
         cal_standard_save_layout.addWidget(self.cal_standard_save_selector)
         cal_standard_save_button_layout = QtWidgets.QHBoxLayout()
-        btn_save_standard = QtWidgets.QPushButton("Save")
+        btn_save_standard = QtWidgets.QPushButton("保存")
         btn_save_standard.setMinimumHeight(20)
         btn_save_standard.clicked.connect(self.saveCalibrationStandard)
-        btn_load_standard = QtWidgets.QPushButton("Load")
+        btn_load_standard = QtWidgets.QPushButton("加载")
         btn_load_standard.setMinimumHeight(20)
         btn_load_standard.clicked.connect(self.loadCalibrationStandard)
-        btn_delete_standard = QtWidgets.QPushButton("Delete")
+        btn_delete_standard = QtWidgets.QPushButton("删除")
         btn_delete_standard.setMinimumHeight(20)
         btn_delete_standard.clicked.connect(self.deleteCalibrationStandard)
         cal_standard_save_button_layout.addWidget(btn_load_standard)
@@ -570,15 +580,15 @@ class CalibrationWindow(QtWidgets.QWidget):
         cal_element = self.app.calibration.cal_element
         if self.app.sweep_control.btn_stop.isEnabled():
             self.app.showError(
-                "Unable to apply calibration while a sweep is running."
-                " Please stop the sweep and try again."
+                "扫频正在运行中，无法应用校准。"
+                " 请停止扫频后重试。"
             )
             return
 
         if not self.app.calibration.isValid1Port():
             self.app.showError(
-                "Not enough data to apply calibration."
-                " Please complete SOL calibration and try again."
+                "校准数据不足，无法应用校准。"
+                " 请完成 SOL 校准后再试。"
             )
             return
 
@@ -662,7 +672,7 @@ class CalibrationWindow(QtWidgets.QWidget):
             self.app.calibration.calc_corrections()
             self.calibration_status_label.setText(
                 _format_cal_label(
-                    self.app.calibration.size(), "Application calibration"
+                    self.app.calibration.size(), "软件计算校准"
                 )
             )
             if self.use_ideal_values.isChecked():
@@ -671,7 +681,7 @@ class CalibrationWindow(QtWidgets.QWidget):
                 )
             else:
                 self.calibration_source_label.setText(
-                    f"{self.app.calibration.source} (Standards: Custom)"
+                    f"{self.app.calibration.source} (校准件: 自定义)"
                 )
 
             if self.app.worker.rawData11:
@@ -695,11 +705,11 @@ class CalibrationWindow(QtWidgets.QWidget):
             # showError here hides the calibration window,
             # so we need to pop up our own
             self.calibration_status_label.setText(
-                "Applying calibration failed."
+                "应用校准失败。"
             )
             self.calibration_source_label.setText(self.app.calibration.source)
             self.app.showError(
-                f"{e} Please complete SOL calibration and try again."
+                f"{e} 请完成 SOL 校准后再试。"
             )
             self.reset()
             return
@@ -707,7 +717,7 @@ class CalibrationWindow(QtWidgets.QWidget):
 
     def loadCalibration(self):
         filename, _ = QtWidgets.QFileDialog.getOpenFileName(
-            filter="Calibration Files (*.cal);;All files (*.*)"
+            filter="校准文件 (*.cal);;所有文件 (*.*)"
         )
         if filename:
             self.app.calibration.load(filename)
@@ -718,7 +728,7 @@ class CalibrationWindow(QtWidgets.QWidget):
         ):
             self.cal_label[name].setText(
                 _format_cal_label(
-                    self.app.calibration.data_size(name), "Loaded"
+                    self.app.calibration.data_size(name), "已加载"
                 )
             )
             if i == 2 and not self.app.calibration.isValid2Port():
@@ -733,11 +743,11 @@ class CalibrationWindow(QtWidgets.QWidget):
     def saveCalibration(self):
         if not self.app.calibration.isCalculated:
             logger.debug("Attempted to save an uncalculated calibration.")
-            self.app.showError("Cannot save an unapplied calibration state.")
+            self.app.showError("无法保存未应用的校准状态。")
             return
         filedialog = QtWidgets.QFileDialog(self)
         filedialog.setDefaultSuffix("cal")
-        filedialog.setNameFilter("Calibration Files (*.cal);;All files (*.*)")
+        filedialog.setNameFilter("校准文件 (*.cal);;所有文件 (*.*)")
         filedialog.setAcceptMode(QtWidgets.QFileDialog.AcceptMode.AcceptSave)
         if filedialog.exec():
             filename = filedialog.selectedFiles()[0]
@@ -754,7 +764,7 @@ class CalibrationWindow(QtWidgets.QWidget):
             self.app.settings.setValue("CalibrationFile", filename)
         except IOError:
             logger.error("Calibration save failed!")
-            self.app.showError("Calibration save failed.")
+            self.app.showError("保存校准文件失败。")
 
     def calStandardChanged(self, button):
         if button == self.use_ideal_values:
@@ -789,20 +799,15 @@ class CalibrationWindow(QtWidgets.QWidget):
         self.btn_automatic.setDisabled(True)
         introduction = QtWidgets.QMessageBox(
             QtWidgets.QMessageBox.Icon.Information,
-            "Calibration assistant",
+            "校准向导",
             (
-                "This calibration assistant will help you create a calibration"
-                " in the NanoVNASaver application. It will sweep the"
-                " standards for you and guide you through the process.<br><br>"
-                "Before starting, ensure you have Open, Short and Load"
-                " standards available and the cables you wish to have"
-                " calibrated connected to the device.<br><br>"
-                'If you want a 2-port calibration, also have a "through"'
-                " connector on hand.<br><br>"
-                "<b>The best results are achieved by having the NanoVNA"
-                " calibrated on-device for the full span of interest and stored"
-                " in save slot 0 before starting.</b><br><br>"
-                "Once you are ready to proceed, press Ok."
+                "本校准向导将协助您在 NanoVNASaver 中完成校准。向导将依次扫频采集各校准件数据并引导您完成全流程。<br><br>"
+                "在开始前，请确保准备好开路 (Open)、短路 (Short) 和负载 (Load)"
+                " 校准件，并将待校准的测试电缆连接至仪器端口。<br><br>"
+                '若需执行双端口 (2-Port) 校准，还需准备“直通 (Thru)”'
+                " 连接件。<br><br>"
+                "<b>提示：在开始前，建议先在 NanoVNA 设备端完成全频段硬件校准并保存至 0 号槽位，以获得最佳测量精度。</b><br><br>"
+                "准备就绪后，请点击“确定”继续。"
             ),
             QtWidgets.QMessageBox.StandardButton.Ok
             | QtWidgets.QMessageBox.StandardButton.Cancel,
@@ -815,10 +820,9 @@ class CalibrationWindow(QtWidgets.QWidget):
         if not self.app.vna.connected():
             QtWidgets.QMessageBox(
                 QtWidgets.QMessageBox.Icon.Information,
-                "NanoVNA not connected",
+                "NanoVNA 未连接",
                 (
-                    "Please ensure the NanoVNA is connected before attempting"
-                    " calibration."
+                    "在校准前请先确认已成功连接 NanoVNA 设备。"
                 ),
             ).exec()
             self.btn_automatic.setDisabled(False)
@@ -827,10 +831,9 @@ class CalibrationWindow(QtWidgets.QWidget):
         if self.app.sweep.properties.mode == SweepMode.CONTINOUS:
             QtWidgets.QMessageBox(
                 QtWidgets.QMessageBox.Icon.Information,
-                "Continuous sweep enabled",
+                "连续扫频已开启",
                 (
-                    "Please disable continuous sweeping before attempting"
-                    " calibration."
+                    "在执行校准前，请先关闭连续扫频。"
                 ),
             ).exec()
             self.btn_automatic.setDisabled(False)
@@ -838,11 +841,10 @@ class CalibrationWindow(QtWidgets.QWidget):
 
         short_step = QtWidgets.QMessageBox(
             QtWidgets.QMessageBox.Icon.Information,
-            "Calibrate short",
+            "短路校准 (Short)",
             (
-                'Please connect the "short" standard to port 0 of the'
-                " NanoVNA.\n\n"
-                "Press Ok when you are ready to continue."
+                '请将“短路 (Short)”校准件连接至 NanoVNA 的端口 0 (CH0)。\n\n'
+                "准备就绪后点击“确定”继续。"
             ),
             QtWidgets.QMessageBox.StandardButton.Ok
             | QtWidgets.QMessageBox.StandardButton.Cancel,
@@ -853,7 +855,7 @@ class CalibrationWindow(QtWidgets.QWidget):
             self.btn_automatic.setDisabled(False)
             return
         self.reset()
-        self.app.calibration.source = "Calibration assistant"
+        self.app.calibration.source = "校准向导"
         self.next_step = 0
         self.app.worker.signals.finished.connect(self.automaticCalibrationStep)
         self.app.sweep_start()
@@ -873,13 +875,11 @@ class CalibrationWindow(QtWidgets.QWidget):
 
             open_step = QtWidgets.QMessageBox(
                 QtWidgets.QMessageBox.Icon.Information,
-                "Calibrate open",
+                "开路校准 (Open)",
                 (
-                    'Please connect the "open" standard to port 0 of the'
-                    " NanoVNA.\n\n"
-                    "Either use a supplied open, or leave the end of the"
-                    " cable unconnected if desired.\n\n"
-                    "Press Ok when you are ready to continue."
+                    '请将“开路 (Open)”校准件连接至 NanoVNA 的端口 0 (CH0)。\n\n'
+                    "可使用配套的标准开路件，或者保持电缆末端悬空开路。\n\n"
+                    "准备就绪后点击“确定”继续。"
                 ),
                 QtWidgets.QMessageBox.StandardButton.Ok
                 | QtWidgets.QMessageBox.StandardButton.Cancel,
@@ -902,11 +902,10 @@ class CalibrationWindow(QtWidgets.QWidget):
             self.next_step = 2
             load_step = QtWidgets.QMessageBox(
                 QtWidgets.QMessageBox.Icon.Information,
-                "Calibrate load",
+                "负载校准 (Load)",
                 (
-                    'Please connect the "load" standard to port 0 of the'
-                    " NanoVNA.\n\n"
-                    "Press Ok when you are ready to continue."
+                    '请将“负载 (Load)”校准件连接至 NanoVNA 的端口 0 (CH0)。\n\n'
+                    "准备就绪后点击“确定”继续。"
                 ),
                 QtWidgets.QMessageBox.StandardButton.Ok
                 | QtWidgets.QMessageBox.StandardButton.Cancel,
@@ -929,13 +928,11 @@ class CalibrationWindow(QtWidgets.QWidget):
             self.next_step = 3
             continue_step = QtWidgets.QMessageBox(
                 QtWidgets.QMessageBox.Icon.Information,
-                "1-port calibration complete",
+                "单端口 (1-Port) 校准完成",
                 (
-                    "The required steps for a 1-port calibration are now"
-                    " complete.\n\n"
-                    "If you wish to continue and perform a 2-port calibration,"
-                    ' press "Yes". To apply the 1-port calibration and stop,'
-                    ' press "Apply"'
+                    "单端口校准所需的步骤已全部完成。\n\n"
+                    "若需继续执行双端口 (2-Port) 校准，请点击“Yes”；"
+                    '若仅应用单端口校准并结束向导，请点击“Apply”。'
                 ),
                 QtWidgets.QMessageBox.StandardButton.Yes
                 | QtWidgets.QMessageBox.StandardButton.Apply
@@ -961,13 +958,11 @@ class CalibrationWindow(QtWidgets.QWidget):
 
             isolation_step = QtWidgets.QMessageBox(
                 QtWidgets.QMessageBox.Icon.Information,
-                "Calibrate isolation",
+                "隔离度校准 (Isolation)",
                 (
-                    'Please connect the "load" standard to port 1 of the'
-                    " NanoVNA.\n\n"
-                    "If available, also connect a load standard to"
-                    " port 0.\n\n"
-                    "Press Ok when you are ready to continue."
+                    '请将“负载 (Load)”校准件连接至 NanoVNA 的端口 1 (CH1)。\n\n'
+                    "若有第二个负载校准件，亦可同时接在端口 0 (CH0)。\n\n"
+                    "准备就绪后点击“确定”继续。"
                 ),
                 QtWidgets.QMessageBox.StandardButton.Ok
                 | QtWidgets.QMessageBox.StandardButton.Cancel,
@@ -990,11 +985,10 @@ class CalibrationWindow(QtWidgets.QWidget):
             self.next_step = 4
             through_step = QtWidgets.QMessageBox(
                 QtWidgets.QMessageBox.Icon.Information,
-                "Calibrate through",
+                "直通校准 (Thru)",
                 (
-                    'Please connect the "through" standard between'
-                    " port 0 and port 1 of the NanoVNA.\n\n"
-                    "Press Ok when you are ready to continue."
+                    '请在 NanoVNA 端口 0 (CH0) 与端口 1 (CH1) 之间连接“直通 (Thru)”标准件。\n\n'
+                    "准备就绪后点击“确定”继续。"
                 ),
                 QtWidgets.QMessageBox.StandardButton.Ok
                 | QtWidgets.QMessageBox.StandardButton.Cancel,
@@ -1017,10 +1011,9 @@ class CalibrationWindow(QtWidgets.QWidget):
             self.cal_save("through")
             apply_step = QtWidgets.QMessageBox(
                 QtWidgets.QMessageBox.Icon.Information,
-                "Calibrate complete",
+                "校准完成",
                 (
-                    "The calibration process is now complete. Press"
-                    ' "Apply" to apply the calibration parameters.'
+                    "校准测量流程已完成。点击“Apply”以计算并应用校准参数。"
                 ),
                 QtWidgets.QMessageBox.StandardButton.Apply
                 | QtWidgets.QMessageBox.StandardButton.Cancel,
@@ -1045,7 +1038,7 @@ class CalibrationWindow(QtWidgets.QWidget):
 
     def select_file_open(self):
         filename, _ = QtWidgets.QFileDialog.getOpenFileName(
-            self, "Select Open S1P", "", "Touchstone Files (*.s1p)"
+            self, "选择开路 (Open) S1P 文件", "", "Touchstone 文件 (*.s1p)"
         )
         if filename != "":
             self.open_touchstone = Touchstone(filename)
@@ -1053,7 +1046,7 @@ class CalibrationWindow(QtWidgets.QWidget):
 
     def select_file_short(self):
         filename, _ = QtWidgets.QFileDialog.getOpenFileName(
-            self, "Select Short S1P", "", "Touchstone Files (*.s1p)"
+            self, "选择短路 (Short) S1P 文件", "", "Touchstone 文件 (*.s1p)"
         )
         if filename != "":
             self.short_touchstone = Touchstone(filename)
@@ -1061,7 +1054,7 @@ class CalibrationWindow(QtWidgets.QWidget):
 
     def select_file_load(self):
         filename, _ = QtWidgets.QFileDialog.getOpenFileName(
-            self, "Select Load S1P", "", "Touchstone Files (*.s1p)"
+            self, "选择负载 (Load) S1P 文件", "", "Touchstone 文件 (*.s1p)"
         )
         if filename != "":
             self.load_touchstone = Touchstone(filename)

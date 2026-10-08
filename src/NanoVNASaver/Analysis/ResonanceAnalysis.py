@@ -54,13 +54,13 @@ class ResonanceAnalysis(Analysis):
         self._widget.setLayout(self.layout)
         self.input_description = QtWidgets.QLineEdit("")
         self.checkbox_move_marker = QtWidgets.QCheckBox()
-        self.layout.addRow(QtWidgets.QLabel("<b>Settings</b>"))
-        self.layout.addRow("Description", self.input_description)
+        self.layout.addRow(QtWidgets.QLabel("<b>分析设置</b>"))
+        self.layout.addRow("描述/导出文件名", self.input_description)
         self.layout.addRow(QHLine())
 
         self.layout.addRow(QHLine())
 
-        self.results_label = QtWidgets.QLabel("<b>Results</b>")
+        self.results_label = QtWidgets.QLabel("<b>分析结果</b>")
         self.layout.addRow(self.results_label)
 
     def _get_data(self, index):
@@ -102,7 +102,7 @@ class ResonanceAnalysis(Analysis):
         )
         logger.debug("Found %d sections ", len(self.crossings))
         if not self.crossings:
-            self.layout.addRow(QtWidgets.QLabel("No resonance found"))
+            self.layout.addRow(QtWidgets.QLabel("未发现谐振点"))
             return
 
         self.do_resonance_analysis()
@@ -112,7 +112,7 @@ class ResonanceAnalysis(Analysis):
         for crossing in self.crossings:
             extended_data.append(self._get_data(crossing))
             self.layout.addRow(
-                "Resonance",
+                "谐振点",
                 QtWidgets.QLabel(
                     format_frequency(self.app.data.s11[crossing].freq)
                 ),

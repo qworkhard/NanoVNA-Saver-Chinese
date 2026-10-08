@@ -18,7 +18,7 @@
    <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
   </property>
   <property name="windowTitle">
-   <string>About NanoVNASaver</string>
+   <string>关于 NanoVNASaver</string>
   </property>
   <property name="windowIcon">
    <iconset resource="main.qrc">
@@ -86,7 +86,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;NanoVNASaver&lt;/p&gt;&lt;p&gt;© Copyright 2019, 2020 Rune B. Broberg&lt;/p&gt;&lt;p&gt;© Copyright 2020ff NanoVNA-Saver Authors&lt;/p&gt;&lt;p&gt;This program comes with ABSOLUTELY NO WARRANTY&lt;/p&gt;&lt;p&gt;This program is licensed under the GNU General Public License version 3&lt;/p&gt;&lt;p&gt;For further details, see: &lt;a href=&quot;https://github.com/NanoVNA-Saver/nanovna-saver&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#444444;&quot;&gt;https://github.com/NanoVNA-Saver/nanovna-saver&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;NanoVNASaver&lt;/p&gt;&lt;p&gt;© Copyright 2019, 2020 Rune B. Broberg&lt;/p&gt;&lt;p&gt;© Copyright 2020ff NanoVNA-Saver Authors&lt;/p&gt;&lt;p&gt;本程序按 GNU 通用公共许可证 (GPL v3) 授权发布，不提供任何形式的担保。&lt;/p&gt;&lt;p&gt;This program is licensed under the GNU General Public License version 3&lt;/p&gt;&lt;p&gt;For further details, see: &lt;a href=&quot;https://github.com/NanoVNA-Saver/nanovna-saver&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#444444;&quot;&gt;https://github.com/NanoVNA-Saver/nanovna-saver&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -149,7 +149,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Check for updates</string>
+         <string>检查更新</string>
         </property>
        </widget>
       </item>
@@ -223,14 +223,14 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>NanoVNA Firmware: </string>
+         <string>NanoVNA 固件版本: </string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QLabel" name="l_dev_version">
         <property name="text">
-         <string>not connected.</string>
+         <string>未连接</string>
         </property>
        </widget>
       </item>
@@ -285,7 +285,7 @@
          <item>
           <widget class="QLabel" name="_l_runtime_title">
            <property name="text">
-            <string>Runtime information</string>
+            <string>运行环境信息</string>
            </property>
           </widget>
          </item>
@@ -298,7 +298,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Copy</string>
+            <string>复制</string>
            </property>
            <property name="icon">
             <iconset theme="QIcon::ThemeIcon::EditCopy"/>

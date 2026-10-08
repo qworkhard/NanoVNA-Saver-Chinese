@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 class BandStopAnalysis(BandPassAnalysis):
     def __init__(self, app):
         super().__init__(app)
-        self.set_titel("Band stop filter analysis")
+        self.set_titel("带阻滤波器分析")
 
     def find_center(self, gains: list[float]) -> int:
         return max(enumerate(gains), key=lambda i: i[1])[0]

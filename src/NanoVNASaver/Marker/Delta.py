@@ -50,7 +50,7 @@ class DeltaMarker(Marker):
     def set_markers(self, marker_a: Marker, marker_b: Marker):
         self.marker_a = marker_a
         self.marker_b = marker_b
-        self.name = f"Delta {marker_b.name} - {marker_a.name}"
+        self.name = f"差值 {marker_b.name} - {marker_a.name}"
         self.group_box.setTitle(self.name)
 
     def updateLabels(self):  # pylint: disable=arguments-differ

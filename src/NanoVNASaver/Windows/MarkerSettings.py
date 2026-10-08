@@ -49,25 +49,25 @@ class MarkerSettingsWindow(QtWidgets.QWidget):
         super().__init__()
         self.app = app
 
-        self.setWindowTitle("Marker settings")
+        self.setWindowTitle("频点标记设置")
         self.setWindowIcon(get_window_icon())
 
         QtGui.QShortcut(QtCore.Qt.Key.Key_Escape, self, self.cancelButtonClick)
 
-        self.exampleMarker = Marker("Example marker")
+        self.exampleMarker = Marker("示例标记")
         layout = QtWidgets.QVBoxLayout()
         self.setLayout(layout)
 
-        settings_group_box = QtWidgets.QGroupBox("Settings")
+        settings_group_box = QtWidgets.QGroupBox("常规设置")
         settings_group_box_layout = QtWidgets.QFormLayout(settings_group_box)
-        self.checkboxColouredMarker = QtWidgets.QCheckBox("Colored marker name")
+        self.checkboxColouredMarker = QtWidgets.QCheckBox("彩色标记名称")
         self.checkboxColouredMarker.setChecked(
             self.app.settings.value("ColoredMarkerNames", True, bool)
         )
         self.checkboxColouredMarker.stateChanged.connect(self.updateMarker)
         settings_group_box_layout.addRow(self.checkboxColouredMarker)
 
-        fields_group_box = QtWidgets.QGroupBox("Displayed data")
+        fields_group_box = QtWidgets.QGroupBox("读数显示项")
         fields_group_box_layout = QtWidgets.QFormLayout(fields_group_box)
 
         self.savedFieldSelection = self.app.settings.value(
@@ -90,10 +90,10 @@ class MarkerSettingsWindow(QtWidgets.QWidget):
 
         btn_layout = QtWidgets.QHBoxLayout()
         layout.addLayout(btn_layout)
-        btn_ok = QtWidgets.QPushButton("OK")
-        btn_apply = QtWidgets.QPushButton("Apply")
-        btn_default = QtWidgets.QPushButton("Defaults")
-        btn_cancel = QtWidgets.QPushButton("Cancel")
+        btn_ok = QtWidgets.QPushButton("确定")
+        btn_apply = QtWidgets.QPushButton("应用")
+        btn_default = QtWidgets.QPushButton("恢复默认")
+        btn_cancel = QtWidgets.QPushButton("取消")
 
         btn_ok.clicked.connect(self.okButtonClick)
         btn_apply.clicked.connect(self.applyButtonClick)

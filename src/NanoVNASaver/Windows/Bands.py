@@ -34,7 +34,7 @@ class BandsWindow(QtWidgets.QWidget):
         super().__init__()
 
         self.app = app
-        self.setWindowTitle("Manage bands")
+        self.setWindowTitle("管理工作频段")
         self.setWindowIcon(get_window_icon())
 
         QtGui.QShortcut(QtCore.Qt.Key.Key_Escape, self, self.hide)
@@ -49,9 +49,9 @@ class BandsWindow(QtWidgets.QWidget):
 
         layout.addWidget(self.bands_table)
 
-        btn_add_row = QtWidgets.QPushButton("Add row")
-        btn_delete_row = QtWidgets.QPushButton("Delete row")
-        btn_reset_bands = QtWidgets.QPushButton("Reset bands/Select region")
+        btn_add_row = QtWidgets.QPushButton("添加行")
+        btn_delete_row = QtWidgets.QPushButton("删除行")
+        btn_reset_bands = QtWidgets.QPushButton("复位频段/选择区域")
         btn_layout = QtWidgets.QHBoxLayout()
         btn_layout.addWidget(btn_add_row)
         btn_layout.addWidget(btn_delete_row)
@@ -70,18 +70,18 @@ class BandsWindow(QtWidgets.QWidget):
     def resetBands(self):
         confirmBox = QtWidgets.QMessageBox(
             QtWidgets.QMessageBox.Icon.Warning,
-            "Confirm reset",
-            "Are you sure you want to reset the bands to default?",
+            "确认复位",
+            "确定要将工作频段恢复为默认设置吗？",
             QtWidgets.QMessageBox.StandardButton.Cancel,
         )
         region_1_defaults_button = QtWidgets.QPushButton(
-            "Reset to Region 1 defaults", confirmBox
+            "恢复为 1 区默认频段 (ITU Region 1)", confirmBox
         )
         region_2_defaults_button = QtWidgets.QPushButton(
-            "Reset to Region 2 defaults", confirmBox
+            "恢复为 2 区默认频段 (ITU Region 2)", confirmBox
         )
         region_3_defaults_button = QtWidgets.QPushButton(
-            "Reset to Region 3 defaults", confirmBox
+            "恢复为 3 区默认频段 (ITU Region 3)", confirmBox
         )
         confirmBox.addButton(
             region_1_defaults_button,

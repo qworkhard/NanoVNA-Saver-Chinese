@@ -38,7 +38,7 @@ class SerialControl(Control):
     connected = Signal(bool)
 
     def __init__(self, app: "vna_app"):
-        super().__init__(app, "Serial port control")
+        super().__init__(app, "串口控制")
 
         self.interface = Interface("serial", "none")
         self.inp_port = QtWidgets.QComboBox()
@@ -46,24 +46,24 @@ class SerialControl(Control):
         self.rescanSerialPort()
         self.inp_port.setEditable(True)
         self.inp_port.currentIndexChanged.connect(self.update_connect_btn_state)
-        self.btn_rescan = QtWidgets.QPushButton("Rescan")
+        self.btn_rescan = QtWidgets.QPushButton("刷新端口")
         self.btn_rescan.setMinimumHeight(20)
-        self.btn_rescan.setFixedWidth(60)
+        self.btn_rescan.setFixedWidth(70)
         self.btn_rescan.clicked.connect(self.rescanSerialPort)
         intput_layout = QtWidgets.QHBoxLayout()
-        intput_layout.addWidget(QtWidgets.QLabel("Port"), stretch=0)
+        intput_layout.addWidget(QtWidgets.QLabel("端口"), stretch=0)
         intput_layout.addWidget(self.inp_port, stretch=1)
         intput_layout.addWidget(self.btn_rescan, stretch=0)
         self.layout.addRow(intput_layout)
 
         button_layout = QtWidgets.QHBoxLayout()
 
-        self.btn_toggle = QtWidgets.QPushButton("Connect to device")
+        self.btn_toggle = QtWidgets.QPushButton("连接设备")
         self.btn_toggle.setMinimumHeight(20)
         self.btn_toggle.clicked.connect(self.serialButtonClick)
         button_layout.addWidget(self.btn_toggle, stretch=1)
 
-        self.btn_settings = QtWidgets.QPushButton("Manage")
+        self.btn_settings = QtWidgets.QPushButton("管理")
         self.btn_settings.setMinimumHeight(20)
         self.btn_settings.setFixedWidth(60)
         self.btn_settings.clicked.connect(
@@ -82,6 +82,8 @@ class SerialControl(Control):
         self.inp_port.clear()
         for iface in get_interfaces():
             self.inp_port.insertItem(1, f"{iface}", iface)
+        if self.inp_port.lineEdit():
+            self.inp_port.lineEdit().setCursorPosition(0)
         self.inp_port.repaint()
 
     def serialButtonClick(self):
@@ -111,6 +113,8 @@ class SerialControl(Control):
         sleep(0.1)
         try:
             self.app.vna = get_VNA(self.interface)
+            if hasattr(self.app.vna, "set_app"):
+                self.app.vna.set_app(self.app)
         except IOError as exc:
             logger.error("Unable to connect to VNA: %s", exc)
 
@@ -119,7 +123,7 @@ class SerialControl(Control):
         )
 
         # connected
-        self.btn_toggle.setText("Disconnect")
+        self.btn_toggle.setText("断开连接")
         self.btn_toggle.repaint()
 
         self.connected.emit(True)
@@ -162,15 +166,17 @@ class SerialControl(Control):
                 logger.error("Unable to disconnect from VNA: %s", exc)
 
             self.interface.close()
-            self.btn_toggle.setText("Connect to device")
+            self.btn_toggle.setText("连接设备")
             self.btn_toggle.repaint()
 
             self.connected.emit(False)
 
     def update_connect_btn_state(self) -> None:
-        # Eanble Connect/Dicsonnect button only if:
+        # Enable Connect/Disconnect button only if:
         # a) serial was already connected
         # b) serial is disconnected AND inp_port was selected
+        if self.inp_port.lineEdit():
+            self.inp_port.lineEdit().setCursorPosition(0)
         port_selected = self.inp_port.currentData() is not None
         self.btn_toggle.setEnabled(self.is_vna_connected() or port_selected)
 

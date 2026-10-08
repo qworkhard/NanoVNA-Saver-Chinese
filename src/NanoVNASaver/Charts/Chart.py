@@ -143,13 +143,13 @@ class Chart(QtWidgets.QWidget):
         self.markers: list[Marker] = []
         self.swrMarkers: set[float] = set()
 
-        self.action_popout = QAction("Popout chart")
+        self.action_popout = QAction("独立窗口弹出图表")
         self.action_popout.triggered.connect(
             lambda: self.popout_requested.emit(self)
         )
         self.addAction(self.action_popout)
 
-        self.action_save_screenshot = QAction("Save image")
+        self.action_save_screenshot = QAction("保存图表图像")
         self.action_save_screenshot.triggered.connect(self.saveScreenshot)
         self.addAction(self.action_save_screenshot)
 
@@ -295,8 +295,8 @@ class Chart(QtWidgets.QWidget):
         logger.info("Saving %s to file...", self.name)
         filename, _ = QtWidgets.QFileDialog.getSaveFileName(
             parent=self,
-            caption="Save image",
-            filter="PNG (*.png);;All files (*.*)",
+            caption="保存图表图像",
+            filter="PNG 图像 (*.png);;所有文件 (*.*)",
         )
 
         logger.debug("Filename: %s", filename)

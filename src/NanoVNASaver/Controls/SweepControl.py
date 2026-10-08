@@ -54,7 +54,7 @@ class FrequencyInputWidget(QtWidgets.QLineEdit):
 
 class SweepControl(Control):
     def __init__(self, app: "vna_app"):
-        super().__init__(app, "Sweep control")
+        super().__init__(app, "扫频控制")
 
         sweep_settings = self.get_settings()
 
@@ -84,15 +84,15 @@ class SweepControl(Control):
         self.inputs["Center"].textEdited.connect(self.update_start_end)
         self.inputs["Span"].textEdited.connect(self.update_start_end)
 
-        input_layout_l.addRow(QtWidgets.QLabel("Start"), self.inputs["Start"])
-        input_layout_l.addRow(QtWidgets.QLabel("Stop"), self.inputs["Stop"])
-        input_layout_r.addRow(QtWidgets.QLabel("Center"), self.inputs["Center"])
-        input_layout_r.addRow(QtWidgets.QLabel("Span"), self.inputs["Span"])
+        input_layout_l.addRow(QtWidgets.QLabel("起始"), self.inputs["Start"])
+        input_layout_l.addRow(QtWidgets.QLabel("终止"), self.inputs["Stop"])
+        input_layout_r.addRow(QtWidgets.QLabel("中心频率"), self.inputs["Center"])
+        input_layout_r.addRow(QtWidgets.QLabel("频跨"), self.inputs["Span"])
 
         self.input_segments = QtWidgets.QLineEdit(sweep_settings.segments)
         self.input_segments.textEdited.connect(self.update_step_size)
 
-        self.label_step = QtWidgets.QLabel("Hz/step")
+        self.label_step = QtWidgets.QLabel("Hz/步进")
         self.label_step.setAlignment(
             QtCore.Qt.AlignmentFlag.AlignRight
             | QtCore.Qt.AlignmentFlag.AlignVCenter
@@ -101,9 +101,9 @@ class SweepControl(Control):
         segment_layout = QtWidgets.QHBoxLayout()
         segment_layout.addWidget(self.input_segments)
         segment_layout.addWidget(self.label_step)
-        self.layout.addRow(QtWidgets.QLabel("Segments"), segment_layout)
+        self.layout.addRow(QtWidgets.QLabel("扫频段数"), segment_layout)
 
-        btn_settings_window = QtWidgets.QPushButton("Sweep settings ...")
+        btn_settings_window = QtWidgets.QPushButton("扫频设置 ...")
         btn_settings_window.setFixedHeight(20)
         btn_settings_window.clicked.connect(
             lambda: self.app.display_window("sweep_settings")
@@ -131,7 +131,7 @@ class SweepControl(Control):
         self.inputs["Start"].textChanged.emit(self.inputs["Start"].text())
 
     def _build_start_button(self) -> QtWidgets.QPushButton:
-        btn = QtWidgets.QPushButton("Sweep")
+        btn = QtWidgets.QPushButton("扫频")
         btn.setFixedHeight(20)
         btn.clicked.connect(self.app.sweep_start)
         btn.setShortcut(QtCore.Qt.Key.Key_Control + QtCore.Qt.Key.Key_W)
@@ -140,7 +140,7 @@ class SweepControl(Control):
         return btn
 
     def _build_stop_button(self) -> QtWidgets.QPushButton:
-        btn = QtWidgets.QPushButton("Stop")
+        btn = QtWidgets.QPushButton("停止")
         btn.setFixedHeight(20)
         btn.clicked.connect(self.app.worker.quit)
         btn.setShortcut(QtCore.Qt.Key.Key_Escape)
@@ -263,12 +263,12 @@ class SweepControl(Control):
         stop = self.get_end()
         if cal_ds.data:
             oor_text = (
-                f"Out of calibration range ("
+                f"超出校准范围 ("
                 f"{format_frequency_inputs(cal_ds.freq_min())} - "
                 f"{format_frequency_inputs(cal_ds.freq_max())})"
             )
         else:
-            oor_text = "No calibration data"
+            oor_text = "无校准数据"
         self.inputs["Start"].setStyleSheet("QLineEdit {}")
         self.inputs["Stop"].setStyleSheet("QLineEdit {}")
         self.inputs["Start"].setToolTip("")

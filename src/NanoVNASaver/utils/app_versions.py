@@ -2,7 +2,7 @@ import platform
 from functools import cache
 from importlib.metadata import PackageNotFoundError, distributions, version
 
-UNKNOWN_VERSION = "unknown"
+UNKNOWN_VERSION = "0.7.3"
 
 
 @cache

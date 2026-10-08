@@ -42,11 +42,11 @@ class SimplePeakSearchAnalysis(Analysis):
 
         self.button = {
             "vswr": QtWidgets.QRadioButton("VSWR"),
-            "resistance": QtWidgets.QRadioButton("Resistance"),
-            "reactance": QtWidgets.QRadioButton("Reactance"),
-            "gain": QtWidgets.QRadioButton("S21 Gain"),
-            "peak_h": QtWidgets.QRadioButton("Highest value"),
-            "peak_l": QtWidgets.QRadioButton("Lowest value"),
+            "resistance": QtWidgets.QRadioButton("电阻 R (Resistance)"),
+            "reactance": QtWidgets.QRadioButton("电抗 X (Reactance)"),
+            "gain": QtWidgets.QRadioButton("S21 增益 (Gain)"),
+            "peak_h": QtWidgets.QRadioButton("最大值 (Peak)"),
+            "peak_l": QtWidgets.QRadioButton("最小值 (Valley)"),
             "move_marker": QtWidgets.QCheckBox(),
         }
 
@@ -66,22 +66,22 @@ class SimplePeakSearchAnalysis(Analysis):
         layout = self.layout
         layout.addRow(self.label["titel"])
         layout.addRow(QHLine())
-        layout.addRow(QtWidgets.QLabel("<b>Settings</b>"))
-        layout.addRow("Data source", self.button["vswr"])
+        layout.addRow(QtWidgets.QLabel("<b>分析设置</b>"))
+        layout.addRow("数据源", self.button["vswr"])
         layout.addRow("", self.button["resistance"])
         layout.addRow("", self.button["reactance"])
         layout.addRow("", self.button["gain"])
         layout.addRow(QHLine())
-        layout.addRow("Peak type", self.button["peak_h"])
+        layout.addRow("极值类型", self.button["peak_h"])
         layout.addRow("", self.button["peak_l"])
         layout.addRow(QHLine())
-        layout.addRow("Move marker to peak", self.button["move_marker"])
+        layout.addRow("移动标记至极值点", self.button["move_marker"])
         layout.addRow(QHLine())
         layout.addRow(self.label["result"])
-        layout.addRow("Peak frequency:", self.label["peak_freq"])
-        layout.addRow("Peak value:", self.label["peak_db"])
+        layout.addRow("极值点频率:", self.label["peak_freq"])
+        layout.addRow("极值读数:", self.label["peak_db"])
 
-        self.set_titel("Simple peak search")
+        self.set_titel("简易峰值搜索")
 
     def runAnalysis(self):
         if not self.app.data.s11:

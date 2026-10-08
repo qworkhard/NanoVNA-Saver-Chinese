@@ -27,7 +27,7 @@ dynamic=['version']
 
 dependencies=[
   'pyserial~=3.5',
-  'pyside6~=6.8',
+  'pyside6-essentials~=6.8',
   'numpy~=2.1',
   'scipy~=1.14',
 ]

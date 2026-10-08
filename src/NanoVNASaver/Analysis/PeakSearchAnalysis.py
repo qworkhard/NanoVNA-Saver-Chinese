@@ -42,12 +42,12 @@ class PeakSearchAnalysis(SimplePeakSearchAnalysis):
         self.peak_cnt.setMinimum(1)
         self.peak_cnt.setMaximum(10)
 
-        self.layout.addRow("Max number of peaks", self.peak_cnt)
+        self.layout.addRow("最大峰值搜索数量", self.peak_cnt)
         self.layout.addRow(QHLine())
-        self.layout.addRow(QtWidgets.QLabel("<b>Results</b>"))
+        self.layout.addRow(QtWidgets.QLabel("<b>分析结果</b>"))
         self.results_header = self.layout.rowCount()
 
-        self.set_titel("Peak search")
+        self.set_titel("峰值搜索")
 
     def runAnalysis(self):
         if not self.app.data.s11:
@@ -85,9 +85,9 @@ class PeakSearchAnalysis(SimplePeakSearchAnalysis):
         for i in indices:
             pos = peaks[i]
             self.layout.addRow(
-                f"Freq: {format_frequency_short(s11[pos].freq)}",
+                f"频率: {format_frequency_short(s11[pos].freq)}",
                 QtWidgets.QLabel(
-                    f" Value: {fmt_fnc(-data[pos] if inverted else data[pos])}"
+                    f" 读数: {fmt_fnc(-data[pos] if inverted else data[pos])}"
                 ),
             )
 

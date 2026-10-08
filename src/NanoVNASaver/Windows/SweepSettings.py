@@ -43,7 +43,7 @@ class SweepSettingsWindow(QtWidgets.QWidget):
         self.app = app
         self.padding = 0
 
-        self.setWindowTitle("Sweep settings")
+        self.setWindowTitle("扫频设置")
         self.setWindowIcon(get_window_icon())
 
         QtGui.QShortcut(QtCore.Qt.Key.Key_Escape, self, self.hide)
@@ -54,14 +54,14 @@ class SweepSettingsWindow(QtWidgets.QWidget):
         layout.addWidget(self.title_box())
         layout.addWidget(self.settings_box())
         # We can only populate this box after the VNA has been connected.
-        self._power_box = QtWidgets.QGroupBox("Power")
+        self._power_box = QtWidgets.QGroupBox("输出功率 (Power)")
         self._power_layout = QtWidgets.QFormLayout(self._power_box)
         layout.addWidget(self._power_box)
         layout.addWidget(self.sweep_box())
         self.update_band()
 
     def title_box(self):
-        box = QtWidgets.QGroupBox("Sweep name")
+        box = QtWidgets.QGroupBox("扫频名称")
         layout = QtWidgets.QFormLayout(box)
 
         input_title = QtWidgets.QLineEdit(self.app.sweep.properties.name)
@@ -73,13 +73,13 @@ class SweepSettingsWindow(QtWidgets.QWidget):
         return box
 
     def settings_box(self) -> "QtWidgets.QWidget":
-        box = QtWidgets.QGroupBox("Settings")
+        box = QtWidgets.QGroupBox("设置")
         layout = QtWidgets.QFormLayout(box)
 
         # Sweep Mode
         sweep_btn_layout = QtWidgets.QHBoxLayout()
 
-        radio_button = QtWidgets.QRadioButton("Single sweep")
+        radio_button = QtWidgets.QRadioButton("单次扫频")
         radio_button.setMinimumHeight(20)
         radio_button.setChecked(
             self.app.sweep.properties.mode == SweepMode.SINGLE
@@ -87,7 +87,7 @@ class SweepSettingsWindow(QtWidgets.QWidget):
         radio_button.clicked.connect(lambda: self.update_mode(SweepMode.SINGLE))
         sweep_btn_layout.addWidget(radio_button)
 
-        radio_button = QtWidgets.QRadioButton("Continous sweep")
+        radio_button = QtWidgets.QRadioButton("连续扫频")
         radio_button.setMinimumHeight(20)
         radio_button.setChecked(
             self.app.sweep.properties.mode == SweepMode.CONTINOUS
@@ -97,7 +97,7 @@ class SweepSettingsWindow(QtWidgets.QWidget):
         )
         sweep_btn_layout.addWidget(radio_button)
 
-        radio_button = QtWidgets.QRadioButton("Averaged sweep")
+        radio_button = QtWidgets.QRadioButton("平均扫频")
         radio_button.setMinimumHeight(20)
         radio_button.setChecked(
             self.app.sweep.properties.mode == SweepMode.AVERAGE
@@ -111,15 +111,13 @@ class SweepSettingsWindow(QtWidgets.QWidget):
 
         # Log sweep
         label = QtWidgets.QLabel(
-            "Logarithmic sweeping changes the step width in each segment"
-            " in logarithmical manner. Useful in conjunction with small"
-            " amount of datapoints and many segments. Step display in"
-            " SweepControl cannot reflect this currently."
+            "对数扫频以对数步长改变每个频段内的步进宽度。在采样点较少但分段较多的场景下非常有用。"
+            "（当前扫频控制面板中的步进显示暂不支持对数换算）"
         )
         label.setWordWrap(True)
         label.setMinimumSize(600, 70)
         layout.addRow(label)
-        checkbox = QtWidgets.QCheckBox("Logarithmic sweep")
+        checkbox = QtWidgets.QCheckBox("对数扫频 (Logarithmic sweep)")
         checkbox.setMinimumHeight(20)
         checkbox.setCheckState(
             Qt.CheckState.Checked
@@ -133,8 +131,8 @@ class SweepSettingsWindow(QtWidgets.QWidget):
 
         # Averaging
         label = QtWidgets.QLabel(
-            "Averaging allows discarding outlying samples to get better"
-            " averages. Common values are 3/0, 5/2, 9/4 and 25/6."
+            "多次平均测量可通过剔除离群样本来获得更平滑稳定的曲线。"
+            "常用设置参数为 3/0, 5/2, 9/4 及 25/6。"
         )
         label.setWordWrap(True)
         label.setMinimumHeight(50)
@@ -153,14 +151,13 @@ class SweepSettingsWindow(QtWidgets.QWidget):
         truncates.editingFinished.connect(
             lambda: self.update_averaging(averages, truncates)
         )
-        layout.addRow("Number of measurements to average", averages)
-        layout.addRow("Number to discard", truncates)
+        layout.addRow("平均测量次数", averages)
+        layout.addRow("剔除样本数", truncates)
 
         # TODO: is this more a device than a sweep property?
         label = QtWidgets.QLabel(
-            "Some times when you measure amplifiers you need to use an"
-            " attenuator in line with  the S21 input (CH1) here you can"
-            " specify it."
+            "在测量高增益放大器等器件时，通常需要在 S21 输入端口 (CH1) 串接衰减器，"
+            "可在此处指定衰减量进行数值补偿。"
         )
         label.setWordWrap(True)
         label.setMinimumHeight(50)
@@ -171,11 +168,11 @@ class SweepSettingsWindow(QtWidgets.QWidget):
         input_att.editingFinished.connect(
             lambda: self.update_attenuator(input_att)
         )
-        layout.addRow("Attenuator in port CH1 (s21) in dB", input_att)
+        layout.addRow("CH1 (S21) 端口衰减器数值 (dB)", input_att)
         return box
 
     def sweep_box(self) -> "QtWidgets.QWidget":
-        box = QtWidgets.QGroupBox("Sweep band")
+        box = QtWidgets.QGroupBox("扫频频段")
         layout = QtWidgets.QFormLayout(box)
         sweep_pad_layout = QtWidgets.QHBoxLayout()
 
@@ -184,11 +181,11 @@ class SweepSettingsWindow(QtWidgets.QWidget):
         self.band_list.setModel(self.app.bands)
         # pylint: disable=unnecessary-lambda
         self.band_list.currentIndexChanged.connect(lambda: self.update_band())
-        layout.addRow("Select band", self.band_list)
+        layout.addRow("选择频段", self.band_list)
 
-        sweep_pad_layout.addWidget(QtWidgets.QLabel("Pad band limits:"))
+        sweep_pad_layout.addWidget(QtWidgets.QLabel("外延频段边界:"))
         for btn_label, value in (
-            ("None", 0),
+            ("无 (None)", 0),
             ("10%", 10),
             ("25%", 25),
             ("100%", 100),
@@ -203,7 +200,7 @@ class SweepSettingsWindow(QtWidgets.QWidget):
         self.band_label = QtWidgets.QLabel()
         layout.addRow(self.band_label)
 
-        btn_set_band_sweep = QtWidgets.QPushButton("Set band sweep")
+        btn_set_band_sweep = QtWidgets.QPushButton("设为当前扫频范围")
         btn_set_band_sweep.setMinimumHeight(20)
         btn_set_band_sweep.clicked.connect(lambda: self.update_band(True))
         layout.addRow(btn_set_band_sweep)
@@ -219,7 +216,7 @@ class SweepSettingsWindow(QtWidgets.QWidget):
                 partial(self.update_tx_power, freq_range)
             )
             self._power_layout.addRow(
-                f"TX power {format_frequency_short}..{freq_range}",
+                f"发射功率 {format_frequency_short}..{freq_range}",
                 power_sel,
             )
 
@@ -245,8 +242,8 @@ class SweepSettingsWindow(QtWidgets.QWidget):
             stop += round(span * self.padding / 100)
 
         self.band_label.setText(
-            f"Sweep span: {format_frequency_short(start)}"
-            f" to {format_frequency_short(stop)}"
+            f"扫频频跨: {format_frequency_short(start)}"
+            f" 至 {format_frequency_short(stop)}"
         )
 
         if not apply:

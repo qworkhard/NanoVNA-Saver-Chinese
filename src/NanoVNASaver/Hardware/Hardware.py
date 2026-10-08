@@ -39,6 +39,7 @@ from .Serial import Interface, drain_serial
 from .SV4401A import SV4401A
 from .SV6301A import SV6301A
 from .TinySA import TinySA, TinySA_Ultra
+from .VirtualVNA import VirtualInterface, VirtualVNA
 from .VNA import VNA
 
 logger = logging.getLogger(__name__)
@@ -69,6 +70,7 @@ NAME2DEVICE = {
     "SV4401A": SV4401A,
     "SV6301A": SV6301A,
     "LiteVNA64": LiteVNA64,
+    "Virtual": VirtualVNA,
     "Unknown": NanoVNA,
 }
 
@@ -121,6 +123,9 @@ def get_interfaces() -> list[Interface]:
         iface.comment = get_comment(iface)
         iface.close()
         interfaces.append(iface)
+
+    # 始终提供虚拟仿真演示设备，便于离线测试与教学演练
+    interfaces.append(VirtualInterface())
 
     logger.debug("Interfaces: %s", interfaces)
     return interfaces

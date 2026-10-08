@@ -59,7 +59,7 @@ class AboutWindow(QtWidgets.QDialog):
             device_version = (
                 f"{self.app.vna.name} v{self.app.vna.version}"
                 if self.app.vna.connected()
-                else "not connected"
+                else "未连接"
             )
             self.ui.l_dev_version.setText(device_version)
 
@@ -96,13 +96,13 @@ class AboutWindow(QtWidgets.QDialog):
             logger.exception(
                 "Checking for updates provided an unparseable file: %s", e
             )
-            version_label.setText("Data error reading versions.")
+            version_label.setText("读取版本数据错误。")
             return
         except error.URLError as e:
             logger.exception(
                 "Checking for updates produced a URL exception: %s", e
             )
-            version_label.setText("Connection error.")
+            version_label.setText("网络连接错误。")
             return
 
         if found_latest_version:
@@ -114,21 +114,21 @@ class AboutWindow(QtWidgets.QDialog):
                 if automatic:
                     QtWidgets.QMessageBox.information(
                         self,
-                        "Update available",
-                        f"There is a new update for NanoVNASaver available!\n"
-                        f"Version {latest_version}\n\n"
-                        f'Press "About ..." to find the update.',
+                        "发现新版本",
+                        f"检测到 NanoVNASaver 有可用更新！\n"
+                        f"版本: {latest_version}\n\n"
+                        f'请点击“关于 ...”查看更新。',
                     )
                 else:
                     QtWidgets.QMessageBox.information(
                         self,
-                        "Update available",
-                        "There is a new update for NanoVNASaver available!\n"
-                        f"Version {latest_version}\n\n",
+                        "发现新版本",
+                        f"检测到 NanoVNASaver 有可用更新！\n"
+                        f"版本: {latest_version}\n\n",
                     )
                 version_label.setText(
-                    f'<a href="{LATEST_URL}">View release page for version '
-                    f"{latest_version} in browser</a>"
+                    f'<a href="{LATEST_URL}">在浏览器中查看 '
+                    f"{latest_version} 版本发布页面</a>"
                 )
                 version_label.setOpenExternalLinks(True)
             else:
@@ -136,15 +136,15 @@ class AboutWindow(QtWidgets.QDialog):
                 # Maybe consider showing it if not an automatic update.
                 #
                 version_label.setText(
-                    f"NanoVNASaver is up to date as of: "
-                    f"{strftime('%Y-%m-%d %H:%M:%S', localtime())}"
+                    f"NanoVNASaver 已是最新版本 (检查时间: "
+                    f"{strftime('%Y-%m-%d %H:%M:%S', localtime())})"
                 )
         else:
             # not good. was gw able to find TAGS_KEY in file in TAGS_URL
             # content! if we get here, something may have changed in the way
             # github creates the .../latest web page.
             version_label.setText(
-                "ERROR - Unable to determine what the latest version is!"
+                "错误 - 无法获取最新版本信息！"
             )
             logger.error("Can't find %s in %s content.", TAGS_KEY, TAGS_URL)
         return

@@ -303,7 +303,7 @@ class NanoVNASaver(QWidget):
         self.marker_column.addWidget(scroll2)
 
         # init delta marker (but assume only one marker exists)
-        self.delta_marker = DeltaMarker("Delta Marker 2 - Marker 1")
+        self.delta_marker = DeltaMarker("差值 标记 2 - 标记 1")
         self.delta_marker_layout = self.delta_marker.get_data_layout()
         self.delta_marker_layout.hide()
         self.marker_column.addWidget(self.delta_marker_layout)
@@ -319,9 +319,9 @@ class NanoVNASaver(QWidget):
         s11_control_box.setLayout(s11_control_layout)
 
         self.s11_min_swr_label = QtWidgets.QLabel()
-        s11_control_layout.addRow("Min VSWR:", self.s11_min_swr_label)
+        s11_control_layout.addRow("最小 VSWR:", self.s11_min_swr_label)
         self.s11_min_rl_label = QtWidgets.QLabel()
-        s11_control_layout.addRow("Return loss:", self.s11_min_rl_label)
+        s11_control_layout.addRow("Return Loss:", self.s11_min_rl_label)
 
         self.marker_column.addWidget(s11_control_box)
 
@@ -332,16 +332,16 @@ class NanoVNASaver(QWidget):
         s21_control_box.setLayout(s21_control_layout)
 
         self.s21_min_gain_label = QtWidgets.QLabel()
-        s21_control_layout.addRow("Min gain:", self.s21_min_gain_label)
+        s21_control_layout.addRow("最小增益:", self.s21_min_gain_label)
 
         self.s21_max_gain_label = QtWidgets.QLabel()
-        s21_control_layout.addRow("Max gain:", self.s21_max_gain_label)
+        s21_control_layout.addRow("最大增益:", self.s21_max_gain_label)
 
         self.marker_column.addWidget(s21_control_box)
 
         # self.marker_column.addStretch(1)
 
-        btn_show_analysis = QtWidgets.QPushButton("Analysis ...")
+        btn_show_analysis = QtWidgets.QPushButton("分析 ...")
         btn_show_analysis.setMinimumHeight(20)
         btn_show_analysis.clicked.connect(
             lambda: self.display_window("analysis")
@@ -365,10 +365,10 @@ class NanoVNASaver(QWidget):
         self.tdr_result_label = QtWidgets.QLabel()
         self.tdr_result_label.setMinimumHeight(20)
         tdr_control_layout.addRow(
-            "Estimated cable length:", self.tdr_result_label
+            "估算线缆长度:", self.tdr_result_label
         )
 
-        self.tdr_button = QtWidgets.QPushButton("Time Domain Reflectometry ...")
+        self.tdr_button = QtWidgets.QPushButton("时域反射 (TDR) ...")
         self.tdr_button.setMinimumHeight(20)
         self.tdr_button.clicked.connect(lambda: self.display_window("tdr"))
 
@@ -394,13 +394,13 @@ class NanoVNASaver(QWidget):
         ###############################################################
 
         reference_control_box = QtWidgets.QGroupBox()
-        reference_control_box.setTitle("Reference sweep")
+        reference_control_box.setTitle("参考基准扫频")
         reference_control_layout = QtWidgets.QFormLayout(reference_control_box)
 
-        btn_set_reference = QtWidgets.QPushButton("Set current as reference")
+        btn_set_reference = QtWidgets.QPushButton("设为参考基准")
         btn_set_reference.setMinimumHeight(20)
         btn_set_reference.clicked.connect(self.setReference)
-        self.btnResetReference = QtWidgets.QPushButton("Reset reference")
+        self.btnResetReference = QtWidgets.QPushButton("复位参考基准")
         self.btnResetReference.setMinimumHeight(20)
         self.btnResetReference.clicked.connect(self.resetReference)
         self.btnResetReference.setDisabled(True)
@@ -420,7 +420,7 @@ class NanoVNASaver(QWidget):
         #  Calibration
         ###############################################################
 
-        btnOpenCalibrationWindow = QtWidgets.QPushButton("Calibration ...")
+        btnOpenCalibrationWindow = QtWidgets.QPushButton("校准 ...")
         btnOpenCalibrationWindow.setMinimumHeight(20)
         self.calibrationWindow = CalibrationWindow(self)
         btnOpenCalibrationWindow.clicked.connect(
@@ -431,16 +431,16 @@ class NanoVNASaver(QWidget):
         #  Display setup
         ###############################################################
 
-        btn_display_setup = QtWidgets.QPushButton("Display setup ...")
+        btn_display_setup = QtWidgets.QPushButton("显示设置 ...")
         btn_display_setup.setMinimumHeight(20)
         btn_display_setup.clicked.connect(lambda: self.display_window("setup"))
 
-        btn_about = QtWidgets.QPushButton("About ...")
+        btn_about = QtWidgets.QPushButton("关于 ...")
         btn_about.setMinimumHeight(20)
 
         btn_about.clicked.connect(lambda: self.display_window("about"))
 
-        btn_open_file_window = QtWidgets.QPushButton("Files ...")
+        btn_open_file_window = QtWidgets.QPushButton("文件 ...")
         btn_open_file_window.setMinimumHeight(20)
 
         btn_open_file_window.clicked.connect(
@@ -613,13 +613,13 @@ class NanoVNASaver(QWidget):
         insert = "("
         if self.sweepSource != "":
             insert += (
-                f"Sweep: {self.sweepSource} @ {len(self.data.s11)} points"
+                f"扫频: {self.sweepSource} @ {len(self.data.s11)} 点"
                 f"{', ' if self.referenceSource else ''}"
             )
         if self.referenceSource != "":
             insert += (
-                f"Reference: {self.referenceSource} @"
-                f" {len(self.ref_data.s11)} points"
+                f"参考基准: {self.referenceSource} @"
+                f" {len(self.ref_data.s11)} 点"
             )
         insert += ")"
         title = f"{self.baseTitle} {insert or ''}"
@@ -641,7 +641,7 @@ class NanoVNASaver(QWidget):
         QtWidgets.QApplication.setActiveWindow(self.windows[name])
 
     def showError(self, text):
-        QtWidgets.QMessageBox.warning(self, "Error", text)
+        QtWidgets.QMessageBox.warning(self, "错误", text)
 
     def showSweepError(self):
         self.showError(self.worker.error_message)

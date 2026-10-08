@@ -149,6 +149,7 @@ class SweepWorker(QThread):
                 self.update_data(freq, values11, values21, i)
             if sweep.properties.mode != SweepMode.CONTINOUS or self._terminate:
                 break
+            sleep(0.05)
 
     def init_data(self) -> None:
         self.data11 = []
