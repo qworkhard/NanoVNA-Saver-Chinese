@@ -199,8 +199,12 @@ class VirtualVNA(VNA):
                     s11_list.append(directivity_leak)
 
                 else:
-                    # 默认待测物 (DUT): 一个在 500 MHz (或扫频中心) 谐振的天线
-                    f_center = (self.start + self.stop) / 2.0
+                    # 默认待测物 (DUT): 一个在全局扫频中心（真实物理谐振点固定）谐振的天线
+                    if self.app and hasattr(self.app, "sweep") and self.app.sweep.segments > 0:
+                        f_center = (self.app.sweep.start + self.app.sweep.end) / 2.0
+                    else:
+                        f_center = 500e6
+
                     df = (f - f_center) / 30e6  # 30MHz 3dB带宽
                     # 谐振时 S11 深度达 -28 dB
                     # RLC 谐振反射模型
@@ -226,7 +230,10 @@ class VirtualVNA(VNA):
                     s21_list.append(complex(0.0002, 0.0001))
                 else:
                     # DUT 传输：带通滤波器响应
-                    f_center = (self.start + self.stop) / 2.0
+                    if self.app and hasattr(self.app, "sweep") and self.app.sweep.segments > 0:
+                        f_center = (self.app.sweep.start + self.app.sweep.end) / 2.0
+                    else:
+                        f_center = 500e6
                     df = abs(f - f_center) / 20e6
                     att_factor = 1.0 / (1.0 + (df ** 4))
                     s21_mag = 0.95 * att_factor + 0.001
