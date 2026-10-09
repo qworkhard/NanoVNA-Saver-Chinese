@@ -81,7 +81,7 @@ class SerialControl(Control):
     def rescanSerialPort(self):
         self.inp_port.clear()
         for iface in get_interfaces():
-            self.inp_port.insertItem(1, f"{iface}", iface)
+            self.inp_port.addItem(f"{iface}", iface)
         if self.inp_port.lineEdit():
             self.inp_port.lineEdit().setCursorPosition(0)
         self.inp_port.repaint()
